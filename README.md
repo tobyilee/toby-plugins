@@ -1,10 +1,14 @@
-# toby-essentials
+# toby-plugins
 
-Toby's personal Claude Code plugin toolkit: code analysis, TDD, Spring scaffolding, PRD generation, AI delegation, and security hooks.
+Toby's personal Claude Code plugin marketplace.
 
-## Components
+## Plugins
 
-### Commands
+### toby-essentials
+
+Code analysis, TDD, Spring scaffolding, PRD generation, AI delegation, and security hooks.
+
+#### Commands
 
 | Command | Description |
 |---------|-------------|
@@ -12,7 +16,7 @@ Toby's personal Claude Code plugin toolkit: code analysis, TDD, Spring scaffoldi
 | `/code-explore` | Deep codebase analysis with 5 parallel agents, generate comprehensive report |
 | `/merge-permissions` | Merge local project permissions into global Claude settings |
 
-### Skills
+#### Skills
 
 | Skill | Description |
 |-------|-------------|
@@ -22,7 +26,7 @@ Toby's personal Claude Code plugin toolkit: code analysis, TDD, Spring scaffoldi
 | `codex-delegate` | Delegate tasks to OpenAI Codex CLI in the background |
 | `gemini-delegate` | Delegate tasks to Google Gemini CLI in the background |
 
-### Hooks
+#### Hooks
 
 | Hook | Event | Description |
 |------|-------|-------------|
@@ -31,18 +35,13 @@ Toby's personal Claude Code plugin toolkit: code analysis, TDD, Spring scaffoldi
 
 ## Installation
 
-Add to your Claude Code plugin configuration:
+Add this marketplace in Claude Code:
 
-```json
-{
-  "plugins": [
-    {
-      "type": "git",
-      "url": "https://github.com/tobyilee/toby-essentials"
-    }
-  ]
-}
 ```
+/install-marketplace https://github.com/tobyilee/toby-plugins
+```
+
+Then install individual plugins from it.
 
 ## License
 
