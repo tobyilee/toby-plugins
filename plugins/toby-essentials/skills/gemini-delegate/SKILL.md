@@ -70,7 +70,7 @@ echo "===GEMINI_RESULT_FILE:$RESULT_FILE==="
 | `--approval-mode yolo` | Equivalent to `-y` (also accepts `auto_edit`, `plan`) |
 | `-o text` | Plain text output (`-o json` for structured output with metadata) |
 | `--include-directories <dir>` | Additional directories to include in the workspace |
-| `-m <model>` | Override model (e.g., `-m gemini-3-flash`) |
+| `-m <model>` | Override model (optional, uses CLI default if omitted) |
 | `-s` / `--sandbox` | Run in sandboxed mode for safer execution |
 | `> "$RESULT_FILE"` | Redirect stdout to file (Gemini outputs to stdout, no file flag) |
 
@@ -93,13 +93,15 @@ When the background task completes:
 
 ## Configuration Overrides
 
-Override Gemini model with `-m` flag:
+By default, do not specify a model — Gemini CLI will use its own default. Override only when the user explicitly requests a specific model:
 
 ```bash
-gemini -p "task" -y -m gemini-3-flash-preview -o text
-```
+# Default (no model specified — uses CLI default)
+gemini -p "task" -y -o text
 
-Available models: `gemini-3-flash-preview` (CLI default), `gemini-2.5-pro`, `gemini-2.5-flash`, etc.
+# Override with specific model
+gemini -p "task" -y -m gemini-2.5-pro -o text
+```
 
 ## Error Handling
 
