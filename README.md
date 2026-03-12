@@ -22,7 +22,7 @@ Code analysis, TDD, Spring scaffolding, PRD generation, AI delegation, and secur
 |-------|-------------|
 | `prd` | Generate structured Product Requirements Documents with user stories |
 | `tdd-team` | 3-agent TDD team (Red/Green/Refactor) for test-driven development |
-| `spring-initializr` | Scaffold Spring Boot projects using start.spring.io API |
+| `spring-initializr` | Interactive wizard to scaffold Spring Boot projects via start.spring.io API (v0.3.0) |
 | `codex-delegate` | Delegate tasks to OpenAI Codex CLI in the background |
 | `gemini-delegate` | Delegate tasks to Google Gemini CLI in the background |
 
