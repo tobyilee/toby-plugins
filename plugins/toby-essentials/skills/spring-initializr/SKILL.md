@@ -1,6 +1,6 @@
 ---
 name: Spring Initializr
-version: 0.4.0
+version: 0.5.0
 description: >
   Use this skill whenever a user wants to start a new Spring Boot project from scratch.
   Trigger phrases include "create a Spring Boot project", "generate a Spring project",
@@ -27,14 +27,6 @@ Always use the Spring Initializr REST API when creating a new Spring Boot projec
 
 Spring Initializr generates the canonical project structure with correct dependency coordinates, compatible versions, proper Gradle/Maven wrappers, and up-to-date starter names. Manual creation risks version mismatches, deprecated starters, and missing wrapper files.
 
-## Express Mode vs Interactive Mode
-
-Before starting the wizard, check whether the user's prompt already contains enough detail to skip interactive steps. If the user specified most of these — Boot version, language, dependencies, or project name — go directly to a **confirmation summary** (Step 5) instead of asking each question individually. Fill in sensible defaults for anything not specified.
-
-**Express mode example:** "Spring Boot 3.4 + Kotlin + JPA + Security + Actuator 프로젝트 만들어줘" → skip to confirmation with those choices pre-filled.
-
-**Interactive mode:** If the user just says "스프링 부트 프로젝트 만들어줘" without details, walk through the wizard steps below.
-
 ## Procedure
 
 ### Step 1. Fetch Metadata from Spring Initializr
@@ -56,31 +48,61 @@ Use this live data for all subsequent steps — do not hardcode versions.
 
 **Important**: The metadata API may return version IDs with a `.RELEASE` suffix (e.g., `4.0.3.RELEASE`). Strip it before using in the download URL: `sed 's/.RELEASE$//'`.
 
-### Step 2. Project Basics
+### Step 2. Spring Boot Version
 
-Ask the user to configure core project settings in a **single** AskUserQuestion. Show all options with defaults so the user can confirm or override selectively:
+Use AskUserQuestion to ask the user to select a Spring Boot version. Present available stable versions from the metadata, with the latest as default:
 
 ```
-── Project Configuration ──
+── Spring Boot Version ──
+Available: 3.4.3, 3.3.8, 3.2.12
+Default: 3.4.3
 
-1. Spring Boot version: 3.4.3 (available: 3.4.3, 3.3.8, 3.2.12)
-2. Language: java (available: java, kotlin, groovy)
-3. Java version: 21 (available: 24, 21, 17)
-4. Build tool: gradle-project-kotlin (options: gradle-project-kotlin, gradle-project, maven-project)
-5. Artifact ID: {current-dir-name}
-6. Package name: toby.ai.{artifactId}
-7. Config format: yaml (options: yaml, properties)
-
-Press enter to accept all defaults, or specify changes like "2: kotlin, 3: 24, 7: properties"
+Select a version (press enter for default):
 ```
 
-Parse the user's response and apply changes. Anything not mentioned keeps its default.
+### Step 3. Language
 
-**Language-specific adjustments:**
-- If **Kotlin** is selected: default build tool becomes `gradle-project-kotlin`, and the generated project will use Kotlin source files
+Use AskUserQuestion to ask the user to select a language:
+
+```
+── Language ──
+Available: java, kotlin, groovy
+Default: java
+
+Select a language (press enter for default):
+```
+
+**Language-specific adjustments** (applied silently to later defaults):
+- If **Kotlin** is selected: default build tool becomes `gradle-project-kotlin`, swap lombok for `configuration-processor` in dependency defaults
 - If **Groovy** is selected: default build tool becomes `gradle-project`
 
-### Step 3. Select Dependencies (Interactive)
+### Step 4. Java Version
+
+Use AskUserQuestion to ask the user to select a Java version:
+
+```
+── Java Version ──
+Available: 24, 21, 17
+Default: 21
+
+Select a version (press enter for default):
+```
+
+### Step 5. Project Details
+
+Use AskUserQuestion to configure the remaining project settings in one prompt:
+
+```
+── Project Details ──
+1. Build tool: gradle-project-kotlin (options: gradle-project-kotlin, gradle-project, maven-project)
+2. Artifact ID: {current-dir-name}
+3. Package name: toby.ai.{artifactId}
+4. Config format: yaml (options: yaml, properties)
+
+Press enter to accept all defaults, or specify changes like "1: maven-project, 4: properties"
+```
+
+### Step 6. Select Dependencies (Interactive)
 
 Using the dependency data from Step 1, present dependencies grouped by category. Pre-select these defaults: **web**, **data-jpa**, **h2**, **lombok**.
 
@@ -147,7 +169,7 @@ The user can:
 - Type `-9` to remove a pre-selected dependency
 - Type dependency names directly like `security, actuator`
 
-### Step 4. Spring Boot Feature Options
+### Step 7. Spring Boot Feature Options
 
 If the user's selections indicate advanced features, ask about them. Otherwise skip this step.
 
@@ -157,9 +179,9 @@ If the user's selections indicate advanced features, ask about them. Otherwise s
 - **GraalVM Native Image** → ask: "Do you want GraalVM Native Image support? This adds the native build plugin for ahead-of-time compilation."
 - **Spring AI dependency selected** → note: "Spring AI requires additional configuration (API keys, model selection). I'll set up placeholder config after generation."
 
-If none of these conditions apply, skip directly to Step 5.
+If none of these conditions apply, skip directly to Step 8.
 
-### Step 5. Confirm and Generate
+### Step 8. Confirm and Generate
 
 Show a summary of all selected parameters:
 
@@ -179,7 +201,7 @@ Options: Virtual Threads enabled
 Proceed? (yes/no)
 ```
 
-### Step 6. Download and Extract
+### Step 9. Download and Extract
 
 ```bash
 curl -s "https://start.spring.io/starter.zip?\
@@ -198,7 +220,7 @@ mv {artifactId}/* {artifactId}/.* . 2>/dev/null; rmdir {artifactId} 2>/dev/null
 
 If the current directory already has project files (build.gradle, pom.xml, src/), ask whether to extract into a subdirectory instead.
 
-### Step 7. Post-Setup Configuration
+### Step 10. Post-Setup Configuration
 
 After extraction, apply configuration based on the user's choices:
 
@@ -221,14 +243,14 @@ After extraction, apply configuration based on the user's choices:
 - For Maven: verify the `native-maven-plugin` is configured
 - Add a note about native compilation: `./gradlew nativeCompile` or `./mvnw -Pnative native:compile`
 
-### Step 8. Verify Build
+### Step 11. Verify Build
 
 ```bash
 ./gradlew build    # Gradle projects
 ./mvnw verify      # Maven projects
 ```
 
-### Step 9. Show Results
+### Step 12. Show Results
 
 After a successful build:
 1. Show the generated build file contents (`build.gradle.kts`, `build.gradle`, or `pom.xml`)
