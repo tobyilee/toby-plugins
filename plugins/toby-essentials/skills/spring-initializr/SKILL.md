@@ -1,13 +1,22 @@
 ---
 name: Spring Initializr
-version: 0.3.0
+version: 0.4.0
 description: >
-  This skill should be used when the user asks to "create a Spring Boot project",
-  "generate a Spring project", "scaffold Spring Boot", "new Spring Boot app",
-  "Spring Boot 프로젝트 생성", "스프링 부트 프로젝트 만들어", "스프링 프로젝트 생성",
-  "새 스프링 프로젝트", or any request that involves creating a new Spring Boot/Spring
-  Framework project from scratch. Ensures that Spring Initializr (start.spring.io) is
-  always used instead of manually creating project files.
+  Use this skill whenever a user wants to start a new Spring Boot project from scratch.
+  Trigger phrases include "create a Spring Boot project", "generate a Spring project",
+  "scaffold Spring Boot", "new Spring Boot app", "set up a Spring project",
+  "Spring Boot 프로젝트 생성", "스프링 부트 프로젝트 만들어줘", "스프링 프로젝트 생성",
+  "새 스프링 프로젝트", "스프링 부트 프로젝트 세팅", "Spring Boot 프로젝트부터 시작",
+  "Kotlin Spring project", "Spring AI project", "Spring Native project".
+  Also trigger when the user describes a new backend they want to build with Spring Boot,
+  even indirectly — e.g. "Spring Boot + Kafka로 프로젝트 세팅해줘", "I want to build
+  a REST API with Spring", "Spring Boot microservice 하나 만들어야 하는데",
+  "챗봇 백엔드를 Spring Boot로 시작하고 싶어", "spring boot rest api project with h2",
+  or mentions wanting to prototype/bootstrap/initialize a Spring-based application.
+  Do NOT trigger for modifications to existing Spring projects (adding dependencies,
+  changing config, upgrading versions, writing tests, debugging). This skill ensures
+  Spring Initializr (start.spring.io) is always used instead of manually creating
+  project files.
 ---
 
 # Spring Initializr
@@ -18,9 +27,15 @@ Always use the Spring Initializr REST API when creating a new Spring Boot projec
 
 Spring Initializr generates the canonical project structure with correct dependency coordinates, compatible versions, proper Gradle/Maven wrappers, and up-to-date starter names. Manual creation risks version mismatches, deprecated starters, and missing wrapper files.
 
-## Procedure
+## Express Mode vs Interactive Mode
 
-This skill follows an interactive wizard flow. Use AskUserQuestion at each step so the user can confirm or change defaults. Present defaults clearly — the goal is to let the user press enter for common cases while still having full control.
+Before starting the wizard, check whether the user's prompt already contains enough detail to skip interactive steps. If the user specified most of these — Boot version, language, dependencies, or project name — go directly to a **confirmation summary** (Step 5) instead of asking each question individually. Fill in sensible defaults for anything not specified.
+
+**Express mode example:** "Spring Boot 3.4 + Kotlin + JPA + Security + Actuator 프로젝트 만들어줘" → skip to confirmation with those choices pre-filled.
+
+**Interactive mode:** If the user just says "스프링 부트 프로젝트 만들어줘" without details, walk through the wizard steps below.
+
+## Procedure
 
 ### Step 1. Fetch Metadata from Spring Initializr
 
@@ -32,65 +47,46 @@ curl -s -H "Accept: application/json" https://start.spring.io | jq '{
   javaVersions: [.javaVersion.values[].id],
   defaultBootVersion: .bootVersion.default,
   defaultJavaVersion: .javaVersion.default,
+  languages: [.language.values[].id],
   dependencies: [.dependencies.values[] | {group: .name, items: [.values[] | {id: .id, name: .name, description: .description}]}]
 }'
 ```
 
-This gives you the real-time available versions and dependencies. Use this data for all subsequent steps — do not hardcode versions.
+Use this live data for all subsequent steps — do not hardcode versions.
 
-**Important**: The metadata API may return version IDs with a `.RELEASE` suffix (e.g., `4.0.3.RELEASE`). When constructing the download URL, strip the `.RELEASE` suffix — the generation endpoint expects just the version number (e.g., `4.0.3`). You can do this with: `sed 's/.RELEASE$//'`.
+**Important**: The metadata API may return version IDs with a `.RELEASE` suffix (e.g., `4.0.3.RELEASE`). Strip it before using in the download URL: `sed 's/.RELEASE$//'`.
 
-### Step 2. Ask Boot Version and Java Version
+### Step 2. Project Basics
 
-Use AskUserQuestion to ask the user to select a Spring Boot version and Java version. Show the available options from the metadata response.
+Ask the user to configure core project settings in a **single** AskUserQuestion. Show all options with defaults so the user can confirm or override selectively:
 
-Example:
 ```
-Available Spring Boot versions: 3.4.3, 3.3.8, 3.2.12
-Default: 3.4.3
+── Project Configuration ──
 
-Available Java versions: 24, 21, 17
-Default: 21
+1. Spring Boot version: 3.4.3 (available: 3.4.3, 3.3.8, 3.2.12)
+2. Language: java (available: java, kotlin, groovy)
+3. Java version: 21 (available: 24, 21, 17)
+4. Build tool: gradle-project-kotlin (options: gradle-project-kotlin, gradle-project, maven-project)
+5. Artifact ID: {current-dir-name}
+6. Package name: toby.ai.{artifactId}
+7. Config format: yaml (options: yaml, properties)
 
-Which Spring Boot version and Java version would you like?
-(Press enter to use defaults: Boot 3.4.3, Java 21)
-```
-
-### Step 3. Ask Artifact ID
-
-The **artifact ID** defaults to the current directory name (basename of `$PWD`). Use AskUserQuestion to confirm or change.
-
-Example:
-```
-Artifact ID (project name): springinit
-(This is based on your current folder name. Change it or press enter to confirm.)
+Press enter to accept all defaults, or specify changes like "2: kotlin, 3: 24, 7: properties"
 ```
 
-### Step 4. Ask Package Name
+Parse the user's response and apply changes. Anything not mentioned keeps its default.
 
-The **package name** defaults to `toby.ai.{artifactId}` (dots replace hyphens). Use AskUserQuestion to confirm or change.
+**Language-specific adjustments:**
+- If **Kotlin** is selected: default build tool becomes `gradle-project-kotlin`, and the generated project will use Kotlin source files
+- If **Groovy** is selected: default build tool becomes `gradle-project`
 
-Example:
-```
-Package name: toby.ai.springinit
-(Change it or press enter to confirm.)
-```
+### Step 3. Select Dependencies (Interactive)
 
-### Step 5. Ask Build Tool
+Using the dependency data from Step 1, present dependencies grouped by category. Pre-select these defaults: **web**, **data-jpa**, **h2**, **lombok**.
 
-Present build tool options with `gradle-project-kotlin` as default:
+If Kotlin was selected, swap **lombok** for **configuration-processor** since Kotlin data classes replace most Lombok use cases.
 
-- `gradle-project-kotlin` — Gradle with Kotlin DSL (default)
-- `gradle-project` — Gradle with Groovy DSL
-- `maven-project` — Maven
-
-Use AskUserQuestion. Most users will accept the default.
-
-### Step 6. Select Dependencies (Interactive)
-
-This is the most important interactive step. Using the dependency data fetched in Step 1, present dependencies **grouped by category**. Pre-select these four by default: **web** (Spring Web MVC), **data-jpa** (Spring Data JPA), **h2** (H2 Database), **lombok**.
-
-Format the dependency selection as a grouped list for AskUserQuestion. Show each group with its dependencies, marking pre-selected ones with `[x]`:
+Format as a grouped list. Show each group with its dependencies, marking pre-selected ones with `[x]`:
 
 ```
 Select dependencies (comma-separated numbers, or type dependency names):
@@ -99,27 +95,27 @@ Select dependencies (comma-separated numbers, or type dependency names):
  [x] 1. web - Spring Web (Build web apps with Spring MVC)
      2. webflux - Spring Reactive Web
      3. graphql - Spring for GraphQL
-     4. websocket - WebSocket
      ...
 
 ── Data & Persistence ──
- [x] 5. data-jpa - Spring Data JPA
- [x] 6. h2 - H2 Database
-     7. postgresql - PostgreSQL Driver
-     8. mysql - MySQL Driver
-     9. data-mongodb - Spring Data MongoDB
+ [x] 4. data-jpa - Spring Data JPA
+ [x] 5. h2 - H2 Database
+     6. postgresql - PostgreSQL Driver
+     7. mysql - MySQL Driver
+     8. flyway - Flyway Migration
      ...
 
 ── Developer Tools ──
- [x] 10. lombok - Lombok
-     11. devtools - Spring Boot DevTools
-     12. docker-compose - Docker Compose Support
-     13. testcontainers - Testcontainers
+ [x] 9. lombok - Lombok
+     10. devtools - Spring Boot DevTools
+     11. docker-compose - Docker Compose Support
+     12. testcontainers - Testcontainers
      ...
 
 ── Security ──
-     14. security - Spring Security
-     15. oauth2-client - OAuth2 Client
+     13. security - Spring Security
+     14. oauth2-client - OAuth2 Client
+     15. oauth2-resource-server - OAuth2 Resource Server
      ...
 
 ── Observability ──
@@ -127,44 +123,67 @@ Select dependencies (comma-separated numbers, or type dependency names):
      17. prometheus - Prometheus
      ...
 
+── AI ──
+     18. spring-ai-openai - Spring AI OpenAI
+     19. spring-ai-anthropic - Spring AI Anthropic (Claude)
+     20. spring-ai-ollama - Spring AI Ollama
+     ...
+
+── Cloud & Infrastructure ──
+     21. cloud-gateway - Spring Cloud Gateway
+     22. cloud-eureka - Eureka Client
+     ...
+
 (... remaining groups ...)
 
 Pre-selected: web, data-jpa, h2, lombok
 Enter additional numbers to add, or -N to remove a pre-selected one.
+Press enter to accept defaults only.
 ```
 
 The user can:
 - Press enter to accept pre-selected defaults only
-- Type numbers like `11,14,16` to add devtools, security, actuator
-- Type `-1` to remove a pre-selected dependency
+- Type numbers like `10,13,16` to add devtools, security, actuator
+- Type `-9` to remove a pre-selected dependency
 - Type dependency names directly like `security, actuator`
 
-Parse the user's response and build the final dependency list.
+### Step 4. Spring Boot Feature Options
 
-### Step 7. Confirm and Generate
+If the user's selections indicate advanced features, ask about them. Otherwise skip this step.
 
-Show a summary of all selected parameters before generating:
+**Show this step only when relevant:**
+
+- **Java 21+ selected** → offer Virtual Threads: "Enable virtual threads? (Adds `spring.threads.virtual.enabled=true`)"
+- **GraalVM Native Image** → ask: "Do you want GraalVM Native Image support? This adds the native build plugin for ahead-of-time compilation."
+- **Spring AI dependency selected** → note: "Spring AI requires additional configuration (API keys, model selection). I'll set up placeholder config after generation."
+
+If none of these conditions apply, skip directly to Step 5.
+
+### Step 5. Confirm and Generate
+
+Show a summary of all selected parameters:
 
 ```
 ── Project Summary ──
 Spring Boot: 3.4.3
+Language: Kotlin
 Java: 21
 Build tool: Gradle (Kotlin DSL)
 Group: toby
-Artifact: springinit
-Package: toby.ai.springinit
-Dependencies: web, data-jpa, h2, lombok, security, actuator
+Artifact: my-service
+Package: toby.ai.myservice
+Config format: YAML
+Dependencies: web, data-jpa, postgresql, security, actuator
+Options: Virtual Threads enabled
 
 Proceed? (yes/no)
 ```
 
-Use AskUserQuestion for final confirmation.
-
-### Step 8. Download and Extract
+### Step 6. Download and Extract
 
 ```bash
 curl -s "https://start.spring.io/starter.zip?\
-type={type}&language=java&bootVersion={bootVersion}&\
+type={type}&language={language}&bootVersion={bootVersion}&\
 baseDir={artifactId}&groupId=toby&artifactId={artifactId}&\
 name={artifactId}&packageName={packageName}&\
 javaVersion={javaVersion}&dependencies={dep1},{dep2},{dep3}" \
@@ -179,22 +198,42 @@ mv {artifactId}/* {artifactId}/.* . 2>/dev/null; rmdir {artifactId} 2>/dev/null
 
 If the current directory already has project files (build.gradle, pom.xml, src/), ask whether to extract into a subdirectory instead.
 
-### Step 9. Verify Build
+### Step 7. Post-Setup Configuration
+
+After extraction, apply configuration based on the user's choices:
+
+**Config file format:**
+- If **YAML** was selected: rename `application.properties` to `application.yml` and convert content to YAML format
+- If **properties** was selected: keep as-is
+
+**Smart defaults by dependency:**
+
+| Dependency | Configuration applied |
+|------------|----------------------|
+| H2 | Enable H2 console, set `datasource.url=jdbc:h2:mem:testdb`, `jpa.hibernate.ddl-auto=create-drop` |
+| Docker Compose | Generate `compose.yaml` stub matching selected DB/messaging deps |
+| Virtual Threads | Add `spring.threads.virtual.enabled=true` |
+| Spring AI | Add placeholder API key config with comments explaining setup |
+| Actuator | Expose health and info endpoints by default |
+
+**GraalVM Native Image** (if selected):
+- For Gradle: verify the `org.graalvm.buildtools.native` plugin is present
+- For Maven: verify the `native-maven-plugin` is configured
+- Add a note about native compilation: `./gradlew nativeCompile` or `./mvnw -Pnative native:compile`
+
+### Step 8. Verify Build
 
 ```bash
 ./gradlew build    # Gradle projects
 ./mvnw verify      # Maven projects
 ```
 
-### Step 10. Post-Setup
+### Step 9. Show Results
 
 After a successful build:
-1. Show the generated `build.gradle` (or `pom.xml`) contents
+1. Show the generated build file contents (`build.gradle.kts`, `build.gradle`, or `pom.xml`)
 2. Show the project directory structure
-3. Apply smart defaults for common dependencies:
-   - **H2**: Enable H2 console in `application.properties`, set `spring.datasource.url=jdbc:h2:mem:testdb`, configure `spring.jpa.hibernate.ddl-auto=create-drop`
-   - **Docker Compose**: Generate a `compose.yaml` stub matching selected DB/messaging dependencies
-4. Ask what to build next (entities, controllers, services, etc.)
+3. Ask what to build next (entities, controllers, services, etc.)
 
 ## Error Handling
 
@@ -205,6 +244,7 @@ After a successful build:
 | Unrecognized dependency | Query `https://start.spring.io/dependencies` for closest match |
 | Directory not empty | Ask whether to extract into subdirectory or confirm overwrite |
 | Build fails after extraction | Read error output, check Java version compatibility, suggest fixes |
+| Kotlin + Lombok selected | Warn that Lombok has limited Kotlin support; suggest using data classes instead |
 
 ## Constraints
 
