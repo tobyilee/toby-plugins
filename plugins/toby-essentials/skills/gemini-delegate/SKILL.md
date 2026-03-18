@@ -1,14 +1,16 @@
 ---
 name: gemini-delegate
 description: >
-  This skill should be used when the user asks to "delegate to gemini",
-  "send to gemini", "ask gemini to", "run with gemini", "have gemini do",
-  "gemini에게", "gemini로", "제미나이에게", "제미나이로", "use gemini for",
-  "let gemini handle", or wants to run a task using Google Gemini CLI
-  in the background and get results back. Also use this when the user
-  wants a second opinion from another AI, wants to compare approaches,
-  or mentions running tasks in parallel with external agents.
-version: 0.2.0
+  Use this skill to delegate tasks to Google Gemini CLI running in the background.
+  Trigger on "delegate to gemini", "send to gemini", "ask gemini to", "run with gemini",
+  "have gemini do", "gemini에게", "gemini로", "제미나이에게", "제미나이로",
+  "use gemini for", "let gemini handle", "gemini한테 시켜", "gemini로 돌려봐".
+  Also trigger when the user wants a second opinion from another AI specifically
+  mentioning Gemini or Google, wants to compare Claude's approach with Gemini,
+  or asks to run a task with an external Google agent in parallel.
+  Do NOT trigger for general "delegate" or "외부 AI" requests without mentioning
+  Gemini/Google — those may be better handled by codex-delegate or other tools.
+version: 0.3.0
 ---
 
 # Gemini Delegate
@@ -24,9 +26,23 @@ Delegate tasks to Google Gemini CLI agent running in the background and retrieve
 
 ### 1. Compose the Task Prompt
 
-Build a clear, self-contained prompt for Gemini. The prompt must work independently — Gemini has no access to this conversation's context. Include:
-- Exact task description with enough background for a fresh agent
+Build a clear, self-contained prompt for Gemini. The prompt must work independently — Gemini has no access to this conversation's context.
+
+**Gather context first.** Before composing the prompt, collect relevant information to include:
+
+```
+# Context to gather:
+- Relevant source files (read key files and include snippets in the prompt)
+- Recent git changes: git diff HEAD~3 --stat (if relevant)
+- Project structure: a brief tree or file listing
+- Build/test commands the agent should use
+- Error messages or logs (if debugging)
+```
+
+**Compose the prompt** with this structure:
+- Task description with enough background for a fresh agent
 - Target files or directories (use absolute paths)
+- Relevant code context (key file contents or snippets — include enough so the agent doesn't need to explore)
 - Constraints, coding style, or preferences mentioned by the user
 - Expected output format and success criteria
 
@@ -81,7 +97,21 @@ After launching, inform the user:
 - It is running in the background
 - They can continue with other work in the meantime
 
-### 4. Retrieve and Present Results
+### 4. Check Progress (if needed)
+
+If the task is taking long or the user asks for status, check the background task:
+
+```bash
+# Check if the process is still running
+TaskOutput(task_id="<task_id>", block=false)
+
+# Peek at partial output
+tail -20 /tmp/gemini-result-*.md 2>/dev/null
+```
+
+If the task appears stuck (no output for extended time), inform the user and offer to cancel and retry.
+
+### 5. Retrieve and Present Results
 
 When the background task completes:
 
@@ -90,6 +120,22 @@ When the background task completes:
 3. Present a concise summary of what Gemini accomplished
 4. If Gemini modified files, run `git diff` to show what changed
 5. Ask the user if they want to keep, revert, or adjust the changes
+
+## Parallel Delegation
+
+When the user wants to compare approaches or get a second opinion, send the same task to both Gemini and Codex simultaneously. Launch both with `run_in_background: true` in the same turn:
+
+```bash
+# Launch Gemini
+GEMINI_RESULT="/tmp/gemini-result-$(date +%s)-$RANDOM.md"
+gemini -p '<TASK>' -y -o text > "$GEMINI_RESULT" 2>&1
+
+# Launch Codex (in a separate Bash call, same turn)
+CODEX_RESULT="/tmp/codex-result-$(date +%s)-$RANDOM.md"
+codex exec '<TASK>' --full-auto --ephemeral -C "<DIR>" -o "$CODEX_RESULT" 2>&1
+```
+
+When both complete, present a side-by-side comparison highlighting differences in approach, code style, and correctness.
 
 ## Configuration Overrides
 
@@ -109,8 +155,9 @@ gemini -p "task" -y -m gemini-2.5-pro -o text
 |-------|--------|
 | Auth failure | Run `gemini` interactively to re-authenticate via OAuth |
 | Empty output | Check stderr from background task output |
-| Timeout | Gemini may still be running; check task status |
+| Timeout | Check task status with `TaskOutput(block=false)`; offer to cancel and retry |
 | Command not found | Run `npm install -g @google/gemini-cli` |
+| Process stuck | No new output for >2min — inform user, offer cancel |
 
 ## Security Note
 
