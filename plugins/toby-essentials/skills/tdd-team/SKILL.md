@@ -1,18 +1,22 @@
 ---
 name: TDD Team
-version: 0.2.0
+version: 0.3.0
 description: >
-  This skill should be used when the user asks to "start TDD", "do TDD",
-  "create a TDD team", "red green refactor", "test-driven development",
-  "set up TDD agents", "TDD 시작", "TDD 팀 만들어", "테스트 주도 개발",
-  or wants to develop features using the TDD cycle with an agentic team.
-  Provides a 3-agent team (Red, Green, Refactor) that executes the TDD
-  Red-Green-Refactor cycle for each task.
+  Use this skill when the user wants to develop features using Test-Driven Development
+  with an agentic Red-Green-Refactor cycle. Trigger on "start TDD", "do TDD",
+  "TDD로 개발해줘", "TDD 시작", "TDD 팀 만들어", "테스트 주도 개발",
+  "red green refactor", "test-driven development", "테스트 먼저 작성하고 싶어",
+  "write tests first then implement", "테스트부터 짜줘", "TDD 방식으로 구현해줘".
+  Also trigger when a user describes a feature and says they want it built incrementally
+  with tests, e.g. "이 기능 테스트 먼저 만들고 하나씩 구현하자", "build this with
+  failing tests first", or "한 단계씩 테스트 작성하면서 개발하고 싶어".
+  Do NOT trigger for simply writing unit tests after implementation, running existing
+  tests, or debugging test failures — those are not TDD workflows.
 ---
 
 # TDD Team
 
-Set up and orchestrate a 3-agent team that executes the TDD Red-Green-Refactor cycle.
+Orchestrate a 3-phase Red-Green-Refactor TDD cycle using sequential Agent calls. Each cycle implements one small behavior increment: write a failing test, make it pass with minimal code, then clean up.
 
 ## Agent Roles
 
@@ -22,121 +26,193 @@ Set up and orchestrate a 3-agent team that executes the TDD Red-Green-Refactor c
 | **green** | GREEN — Make it pass | Implement the simplest code to make the test pass |
 | **refactor** | REFACTOR — Clean up | Improve code quality while keeping all tests passing |
 
-## Setup Procedure
+## Setup
 
 ### 1. Detect Environment
 
-Before creating the team, detect the project's language and build tool:
+Before starting, detect the project's language and build tool:
 
-- Check for build files: `build.gradle`, `pom.xml`, `package.json`, `Cargo.toml`, `go.mod`, etc.
-- Determine the test command (e.g., `./gradlew test`, `mvn test`, `npm test`)
-- Verify the build tool works by running a quick build command
-- If no project exists, ask the user what language and build tool to use, then scaffold the project
+- Check for build files: `build.gradle.kts`, `pom.xml`, `package.json`, `Cargo.toml`, `go.mod`, `pyproject.toml`, etc.
+- Determine the test command (e.g., `./gradlew test`, `npm test`, `pytest`)
+- Verify the build tool works by running a quick build
+- If no project exists, ask the user what language/framework to use
 
-Capture these as environment variables for agent prompts:
+Capture as environment context:
 ```
 PROJECT_ROOT: /path/to/project
 SOURCE_DIR: src/main/java (or equivalent)
 TEST_DIR: src/test/java (or equivalent)
-BUILD_CMD: ./gradlew build
 TEST_CMD: ./gradlew test
 TEST_FRAMEWORK: JUnit 5 / Jest / pytest / etc.
 ```
 
-### 2. Create Team and Spawn Agents
+### 2. Decompose into TDD Tasks
 
-1. Create a team using TeamCreate (e.g., `tdd-cycle`)
-2. Read agent prompts from `references/agent-prompts.md`
-3. Spawn three `general-purpose` agents — **red**, **green**, **refactor** — each with:
-   - The corresponding prompt from `references/agent-prompts.md`
-   - Environment context appended (project root, directories, build/test commands, test framework)
-   - `team_name` parameter set so agents join the team
-4. Wait for all three agents to report ready before accepting tasks
+This is the most important planning step. Break the user's feature request into a sequence of small, incremental behaviors — each one becomes a TDD cycle.
 
-## TDD Cycle Workflow
+**How to decompose well:**
+- Start from the simplest possible behavior and build outward
+- Each task should add exactly one new behavior or edge case
+- Later tasks can build on earlier ones
+- Name each task as a behavior statement: "returns X when Y"
 
-For each task the user provides, execute this cycle:
+**Example:** User says "Calculator 클래스 만들어줘"
 
-### Step 1: RED Phase
+```
+TDD Tasks:
+1. add(1, 2) returns 3 (basic addition)
+2. add(0, 0) returns 0 (zero case)
+3. subtract(5, 3) returns 2 (basic subtraction)
+4. multiply(3, 4) returns 12 (basic multiplication)
+5. divide(10, 2) returns 5 (basic division)
+6. divide(10, 0) throws ArithmeticException (division by zero)
+```
 
-1. Create three tasks with TaskCreate: `[RED] ...`, `[GREEN] ...`, `[REFACTOR] ...`
-2. Set dependencies: GREEN blocked by RED, REFACTOR blocked by GREEN
-3. Assign the RED task to `red` agent via TaskUpdate
-4. Send task details via SendMessage to `red`
-5. Wait for `red` to report:
-   - **Test fails** → Proceed to GREEN
-   - **Test already passes** → Skip GREEN, go directly to REFACTOR (test still has value as regression documentation)
-   - **Build fails** → Ask `red` to fix compilation issues, then re-verify
+Present the task list to the user for confirmation before starting. The user can reorder, add, remove, or modify tasks.
 
-### Step 2: GREEN Phase
+## TDD Cycle Execution
 
-1. Mark RED task completed, assign GREEN task to `green`
-2. Send task context: what test needs to pass, relevant file paths
-3. Wait for `green` to report all tests passing
-4. If tests still fail → send `green` the failure output and ask to retry
+For each task, run three sequential Agent calls. This is simpler and more reliable than using Team/Task APIs because RED→GREEN→REFACTOR is inherently sequential.
 
-### Step 3: REFACTOR Phase
+### RED Phase
 
-1. Mark GREEN task completed, assign REFACTOR task to `refactor`
-2. Send task context with guidance on what to look for (duplication, naming, complexity)
-3. Wait for `refactor` to report results
-4. If any test fails after refactoring → ask `refactor` to revert and retry
+Spawn an Agent with the Red agent prompt from `references/agent-prompts.md`, appending:
+- The environment context
+- The current task description
+- Existing source and test file paths for context
 
-### Step 4: Review and Report
+```
+Execute TDD RED phase:
+- Task: "{task description}"
+- Environment: {environment context}
+- Write a failing test, verify it fails
+- Report: test file path, test method name, failure message
+- Save any created/modified files
+```
 
-1. Mark REFACTOR task completed
-2. Read current source and test files to present to the user
-3. Summarize what each phase accomplished
-4. Ask the user for the next task or if the TDD session is complete
+Wait for completion. Check the result:
+- **Test fails** → proceed to GREEN
+- **Test already passes** → skip GREEN, go to REFACTOR
+- **Build fails** → ask the agent to fix compilation, re-verify
+
+### GREEN Phase
+
+Spawn an Agent with the Green agent prompt, including:
+- The failing test file path and failure message from RED
+- The current source code for context
+
+```
+Execute TDD GREEN phase:
+- Failing test: {test file path and method}
+- Failure message: {from RED phase}
+- Environment: {environment context}
+- Write the MINIMUM code to make the test pass
+- Run ALL tests, confirm everything passes
+- Report: files modified, all test results
+```
+
+Wait for completion. If tests still fail, send the failure back and ask to retry.
+
+### REFACTOR Phase
+
+Spawn an Agent with the Refactor agent prompt, including:
+- All current source and test files
+- What was implemented in this cycle
+
+```
+Execute TDD REFACTOR phase:
+- Just implemented: {summary of RED+GREEN}
+- Environment: {environment context}
+- Look for: duplication, naming, complexity, test readability
+- Run ALL tests after each change
+- If code is clean enough, report "no refactoring needed"
+- Report: what changed and why, final test results
+```
+
+### Cycle Summary and User Checkpoint
+
+After each cycle completes, present a summary to the user:
+
+```
+── TDD Cycle {N} Complete ──
+Task: {task description}
+
+RED:    ✅ Test written: UserServiceTest.shouldReturnUserById()
+GREEN:  ✅ Implementation: UserService.findById() — hardcoded return
+REFACTOR: ✅ Extracted UserRepository interface
+
+Tests: 5 passed, 0 failed
+Files changed: UserService.java, UserServiceTest.java, UserRepository.java
+
+── Progress ──
+[x] 1. findById returns user when exists
+[x] 2. findById throws when not found
+[ ] 3. createUser saves and returns user
+[ ] 4. deleteUser removes user
+[ ] 5. listUsers returns all users
+
+Continue with task 3? (or modify the remaining tasks)
+```
+
+This checkpoint lets the user:
+- Review what was done
+- Modify upcoming tasks based on new understanding
+- Skip tasks that are no longer needed
+- Add new tasks discovered during development
+- Stop the TDD session
+
+## Progress Tracking
+
+Maintain a running task list throughout the session. After each cycle, update the status:
+
+```
+[x] Completed tasks (with cycle number)
+[>] Current task
+[ ] Remaining tasks
+```
+
+Show this progress list at every user checkpoint. This gives visibility into the session's arc and helps the user decide what to focus on next.
 
 ## Key Principles
 
 ### Strict Phase Separation
 - RED writes tests only (and minimal stubs for compilation)
 - GREEN writes production code only (no test changes)
-- REFACTOR changes no behavior (all tests must still pass after changes)
+- REFACTOR changes no behavior (all tests must still pass)
+
+The reason for strict separation is that it prevents the common anti-pattern of writing tests and implementation simultaneously, which defeats the purpose of TDD — you lose the confidence that the test actually tests what you think it tests.
 
 ### Simplest Implementation First
 - GREEN writes the absolute minimum to pass: hardcoding is acceptable, duplication is acceptable
-- Elegance comes from the REFACTOR phase, not the GREEN phase
+- Elegance comes from REFACTOR, not GREEN
 
-### Test Already Passes
-- When RED's test passes without new production code, skip GREEN
-- The test still has value as regression documentation
-- Proceed to REFACTOR to look for cleanup opportunities
+This feels counterintuitive but is fundamental to TDD. The simplest implementation reveals whether the test is specific enough. If hardcoding "passes" a test that should require real logic, the test needs improvement.
 
 ### Incremental Progress
 - Each cycle adds ONE behavior
 - Small steps build confidence and catch errors early
 - The user drives what to implement next
 
-## Agent Communication
-
-Use SendMessage with `type: "message"` to communicate with agents. Include in every message:
-- Task number reference (e.g., "Task #3")
-- Clear description of the work
-- Relevant file paths
-- Build/test commands to run
-
 ## Error Handling
 
 | Situation | Action |
 |-----------|--------|
-| Build fails in RED | Ask `red` to fix stubs, re-verify failure |
+| Build fails in RED | Ask agent to fix stubs, re-verify failure |
 | GREEN can't pass test | Send failure output, ask to retry with different approach |
-| REFACTOR breaks tests | Ask `refactor` to revert and retry with smaller changes |
-| Agent goes unresponsive | Send follow-up message; if still unresponsive, reassign to a new agent |
+| REFACTOR breaks tests | Ask agent to revert and retry with smaller changes |
+| Agent produces incorrect output | Re-read the source files, correct, and re-run tests |
 
-## Shutdown
+## Session End
 
-When the user finishes the TDD session:
-1. Send `shutdown_request` to each agent (red, green, refactor)
-2. Wait for confirmations
-3. Clean up with TeamDelete
+When the user finishes the TDD session, provide a final summary:
+- Total cycles completed
+- All files created/modified
+- Final test count (passed/failed)
+- Suggestions for next steps (more test cases, integration tests, etc.)
 
 ## Additional Resources
 
 ### Reference Files
 
-For detailed agent system prompts with full instructions:
+For detailed agent system prompts:
 - **`references/agent-prompts.md`** — Complete prompts for Red, Green, and Refactor agents including rules, workflow, and verification steps
