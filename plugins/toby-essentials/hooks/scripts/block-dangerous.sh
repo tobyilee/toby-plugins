@@ -53,16 +53,4 @@ fi
 #  exit 2
 #fi
 
-# .env 파일 접근 차단 (.env.local은 허용, 대소문자 무시 - macOS 호환)
-# 먼저 .env.local이 아닌 .env 파일 참조가 있는지 검사
-ENV_REFS=$(echo "$COMMAND" | grep -oiE '([a-zA-Z0-9_./-]*\.env[a-zA-Z0-9_.]*)')
-if [ -n "$ENV_REFS" ]; then
-  # .env.local을 제외한 .env 참조가 남아있으면 차단
-  NON_LOCAL=$(echo "$ENV_REFS" | grep -viE '\.env\.local$')
-  if [ -n "$NON_LOCAL" ]; then
-    echo "BLOCKED: Access to .env files prohibited (found: $NON_LOCAL)" >&2
-    exit 2
-  fi
-fi
-
 exit 0
