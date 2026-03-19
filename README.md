@@ -6,7 +6,7 @@ Toby's personal Claude Code plugin marketplace.
 
 ### toby-essentials
 
-Code analysis, TDD, Spring scaffolding, PRD generation, AI delegation, and security hooks.
+Code analysis, TDD, Spring scaffolding, Spring Boot 4 guide, PRD generation, AI delegation, cmux terminal control, and security hooks.
 
 #### Commands
 
@@ -25,13 +25,14 @@ Code analysis, TDD, Spring scaffolding, PRD generation, AI delegation, and secur
 | `spring-initializr` | Step-by-step wizard to scaffold Spring Boot projects via start.spring.io API — supports Java/Kotlin/Groovy, Virtual Threads, Spring AI, GraalVM Native (v0.5.0) |
 | `codex-delegate` | Delegate tasks to OpenAI Codex CLI with context gathering and parallel delegation support (v0.3.0) |
 | `gemini-delegate` | Delegate tasks to Google Gemini CLI with context gathering and parallel delegation support (v0.3.0) |
+| `cmux` | Control the cmux terminal app from Claude Code — open browser panes, split panes, send notifications, manage workspaces |
+| `spring-boot4-guide` | Guide for developing with Spring Boot 4 and Spring Framework 7 — migration, breaking changes, Jackson 3, modularization |
 
 #### Hooks
 
 | Hook | Event | Description |
 |------|-------|-------------|
 | `block-dangerous.sh` | PreToolUse (Bash) | Block `rm -rf` outside project dir, `.env` file access |
-| `block-env-read.sh` | PreToolUse (Read) | Block reading `.env` files (`.env.local` allowed) |
 
 ### claude-orchestrator
 
