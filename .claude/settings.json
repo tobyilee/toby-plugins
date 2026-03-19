@@ -1,0 +1,6 @@
+{
+  "enabledLocalPlugins": {
+    "plugins/toby-essentials/.claude-plugin": true,
+    "plugins/claude-orchestrator/.claude-plugin": true
+  }
+}
