@@ -1,7 +1,7 @@
 {
   "name": "toby-essentials",
-  "version": "1.3.0",
-  "description": "Toby's personal toolkit: code analysis, TDD, Spring scaffolding, PRD generation, AI delegation, and security hooks",
+  "version": "1.4.0",
+  "description": "Toby's personal toolkit: code analysis, TDD, Spring scaffolding, PRD generation, AI delegation, cmux terminal control, and security hooks",
   "author": {
     "name": "Toby Lee"
   },
