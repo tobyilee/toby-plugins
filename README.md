@@ -6,7 +6,7 @@ Toby's personal Claude Code plugin marketplace.
 
 ### toby-essentials
 
-Code analysis, TDD, Spring scaffolding, Spring Boot 4 guide, PRD generation, AI delegation, cmux terminal control, and security hooks.
+Code analysis, TDD, Spring Boot init, Spring Boot 4 guide, PRD generation, AI delegation, cmux terminal control, and security hooks.
 
 #### Commands
 
@@ -22,7 +22,7 @@ Code analysis, TDD, Spring scaffolding, Spring Boot 4 guide, PRD generation, AI 
 |-------|-------------|
 | `prd` | Generate structured Product Requirements Documents with user stories |
 | `tdd-team` | 3-agent TDD team (Red/Green/Refactor) with task decomposition and progress tracking (v0.3.0) |
-| `spring-initializr` | Step-by-step wizard to scaffold Spring Boot projects via start.spring.io API — supports Java/Kotlin/Groovy, Virtual Threads, Spring AI, GraalVM Native (v0.5.0) |
+| `spring-boot-init` | Spring Initializr API를 활용한 Spring Boot 프로젝트 생성 — Gradle Kotlin DSL 기반, 인터랙티브 의존성 선택 |
 | `codex-delegate` | Delegate tasks to OpenAI Codex CLI with context gathering and parallel delegation support (v0.3.0) |
 | `gemini-delegate` | Delegate tasks to Google Gemini CLI with context gathering and parallel delegation support (v0.3.0) |
 | `cmux` | Control the cmux terminal app from Claude Code — open browser panes, split panes, send notifications, manage workspaces |
