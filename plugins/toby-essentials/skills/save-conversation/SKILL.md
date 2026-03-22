@@ -111,7 +111,7 @@ Guidelines for writing the summary:
 - Include file paths, command names, surface refs, and version numbers — these are the details that matter
 - Write in the same language as the conversation (Korean if Korean, English if English)
 - Skip trivial confirmations ("ok", "yes") — only log meaningful exchanges
-- For incremental saves: include a `이전 로그:` reference at the top pointing to the previous save file. Always start numbering from `## 1.` (do not continue from the previous file's numbering)
+- For incremental saves: always start numbering from `## 1.` (do not continue from the previous file's numbering). Do not include a reference to the previous log file
 
 ### Step 5: Save and confirm
 

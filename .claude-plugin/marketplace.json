@@ -9,7 +9,7 @@
     {
       "name": "toby-essentials",
       "description": "Toby's personal toolkit: code analysis, TDD, Spring scaffolding, PRD generation, AI delegation, and security hooks",
-      "version": "1.12.0",
+      "version": "1.13.0",
       "author": {
         "name": "Toby Lee"
       },
