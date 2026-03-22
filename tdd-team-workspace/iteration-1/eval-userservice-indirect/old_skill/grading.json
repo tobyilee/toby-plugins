@@ -1,0 +1,11 @@
+{
+  "eval_id": 1,
+  "config": "old_skill",
+  "expectations": [
+    {"text": "Task decomposition with edge cases — 3 methods become 6+ tasks", "passed": false, "evidence": "Only 3 cycles (one per method). No edge case decomposition — no error handling tests planned."},
+    {"text": "Sequential Agent calls instead of Team API", "passed": false, "evidence": "Uses TeamCreate, TaskCreate×3, TaskUpdate×6, SendMessage×3 per cycle. ~12 orchestration calls per cycle, ~45 total."},
+    {"text": "User checkpoint between cycles with modify/add/remove options", "passed": false, "evidence": "Shows cycle results but no explicit checkpoint offering task modification. User interaction limited to 'ask what to build next'."},
+    {"text": "Progress tracking with checkbox list", "passed": false, "evidence": "No cumulative progress tracking. Only individual cycle summaries."}
+  ],
+  "pass_rate": 0.0
+}

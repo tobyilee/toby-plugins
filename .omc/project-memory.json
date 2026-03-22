@@ -1,0 +1,202 @@
+{
+  "version": "1.0.0",
+  "lastScanned": 1773709218423,
+  "projectRoot": "/Users/tobylee/workspace/ai/toby-plugins",
+  "techStack": {
+    "languages": [],
+    "frameworks": [],
+    "packageManager": null,
+    "runtime": null
+  },
+  "build": {
+    "buildCommand": null,
+    "testCommand": null,
+    "lintCommand": null,
+    "devCommand": null,
+    "scripts": {}
+  },
+  "conventions": {
+    "namingStyle": null,
+    "importStyle": null,
+    "testPattern": null,
+    "fileOrganization": null
+  },
+  "structure": {
+    "isMonorepo": false,
+    "workspaces": [],
+    "mainDirectories": [],
+    "gitBranches": {
+      "defaultBranch": "main",
+      "branchingStrategy": null
+    }
+  },
+  "customNotes": [],
+  "directoryMap": {
+    "plugins": {
+      "path": "plugins",
+      "purpose": null,
+      "fileCount": 0,
+      "lastAccessed": 1773709218307,
+      "keyFiles": []
+    }
+  },
+  "hotPaths": [
+    {
+      "path": "plugins/claude-orchestrator/.claude-plugin/plugin.json",
+      "accessCount": 1,
+      "lastAccessed": 1773709246668,
+      "type": "file"
+    },
+    {
+      "path": "plugins/claude-orchestrator/package.json",
+      "accessCount": 1,
+      "lastAccessed": 1773709247118,
+      "type": "file"
+    },
+    {
+      "path": "plugins/claude-orchestrator/hooks/hooks.json",
+      "accessCount": 1,
+      "lastAccessed": 1773709247565,
+      "type": "file"
+    },
+    {
+      "path": "plugins/claude-orchestrator/lib/config-loader.js",
+      "accessCount": 1,
+      "lastAccessed": 1773709251244,
+      "type": "file"
+    },
+    {
+      "path": "plugins/claude-orchestrator/lib/agent-checker.js",
+      "accessCount": 1,
+      "lastAccessed": 1773709251568,
+      "type": "file"
+    },
+    {
+      "path": "plugins/claude-orchestrator/lib/output-parser.js",
+      "accessCount": 1,
+      "lastAccessed": 1773709251788,
+      "type": "file"
+    },
+    {
+      "path": "plugins/claude-orchestrator/bin/install.js",
+      "accessCount": 1,
+      "lastAccessed": 1773709252223,
+      "type": "file"
+    },
+    {
+      "path": "plugins/claude-orchestrator/hooks/scripts/on-stop.js",
+      "accessCount": 1,
+      "lastAccessed": 1773709257455,
+      "type": "file"
+    },
+    {
+      "path": "plugins/claude-orchestrator/hooks/scripts/post-edit-review.js",
+      "accessCount": 1,
+      "lastAccessed": 1773709257880,
+      "type": "file"
+    },
+    {
+      "path": "plugins/claude-orchestrator/agents/orchestrator-agent.md",
+      "accessCount": 1,
+      "lastAccessed": 1773709258800,
+      "type": "file"
+    },
+    {
+      "path": "plugins/claude-orchestrator/commands/doctor.md",
+      "accessCount": 1,
+      "lastAccessed": 1773709259252,
+      "type": "file"
+    },
+    {
+      "path": "plugins/claude-orchestrator/commands/agents-status.md",
+      "accessCount": 1,
+      "lastAccessed": 1773709259667,
+      "type": "file"
+    },
+    {
+      "path": "plugins/claude-orchestrator/commands/orchestrator-init.md",
+      "accessCount": 1,
+      "lastAccessed": 1773709260064,
+      "type": "file"
+    },
+    {
+      "path": "plugins/claude-orchestrator/commands/review-parallel.md",
+      "accessCount": 1,
+      "lastAccessed": 1773709261141,
+      "type": "file"
+    },
+    {
+      "path": "plugins/claude-orchestrator/tests/lib/config-loader.test.js",
+      "accessCount": 1,
+      "lastAccessed": 1773709261409,
+      "type": "file"
+    },
+    {
+      "path": "plugins/claude-orchestrator/skills/delegate/SKILL.md",
+      "accessCount": 1,
+      "lastAccessed": 1773709267476,
+      "type": "file"
+    },
+    {
+      "path": "plugins/claude-orchestrator/skills/delegate-parallel/SKILL.md",
+      "accessCount": 1,
+      "lastAccessed": 1773709267919,
+      "type": "file"
+    },
+    {
+      "path": "plugins/claude-orchestrator/skills/delegate-orchestrate/SKILL.md",
+      "accessCount": 1,
+      "lastAccessed": 1773709268355,
+      "type": "file"
+    },
+    {
+      "path": "plugins/claude-orchestrator/skills/pipeline/SKILL.md",
+      "accessCount": 1,
+      "lastAccessed": 1773709269306,
+      "type": "file"
+    },
+    {
+      "path": "plugins/claude-orchestrator/skills/codex-delegate/SKILL.md",
+      "accessCount": 1,
+      "lastAccessed": 1773709269803,
+      "type": "file"
+    },
+    {
+      "path": "plugins/claude-orchestrator/skills/gemini-delegate/SKILL.md",
+      "accessCount": 1,
+      "lastAccessed": 1773709270229,
+      "type": "file"
+    },
+    {
+      "path": "plugins/claude-orchestrator/skills/claude-subagent/SKILL.md",
+      "accessCount": 1,
+      "lastAccessed": 1773709270718,
+      "type": "file"
+    },
+    {
+      "path": "plugins/claude-orchestrator/skills/custom-agent-template/SKILL.md",
+      "accessCount": 1,
+      "lastAccessed": 1773709271162,
+      "type": "file"
+    },
+    {
+      "path": "plugins/claude-orchestrator/README.md",
+      "accessCount": 1,
+      "lastAccessed": 1773709277089,
+      "type": "file"
+    },
+    {
+      "path": "plugins/claude-orchestrator/LICENSE",
+      "accessCount": 1,
+      "lastAccessed": 1773709277256,
+      "type": "file"
+    },
+    {
+      "path": "plugins/claude-orchestrator/tests/e2e/phase1-validation.md",
+      "accessCount": 1,
+      "lastAccessed": 1773709277952,
+      "type": "file"
+    }
+  ],
+  "userDirectives": []
+}

@@ -1,0 +1,11 @@
+{
+  "eval_id": 2,
+  "config": "old_skill",
+  "expectations": [
+    {"text": "Task decomposition with edge cases for 2 methods", "passed": false, "evidence": "Only 2 cycles — one per method. No edge case tasks (null, empty string)."},
+    {"text": "Sequential Agent calls instead of Team API", "passed": false, "evidence": "Uses TeamCreate, TaskCreate, TaskUpdate, SendMessage. ~40 tool calls for 2 cycles."},
+    {"text": "Final session summary with totals", "passed": true, "evidence": "Shows session summary after completion."},
+    {"text": "Clean shutdown without TeamDelete/shutdown_request", "passed": false, "evidence": "Explicit shutdown procedure: shutdown_request to all 3 agents, wait for confirmations, TeamDelete call."}
+  ],
+  "pass_rate": 0.25
+}
