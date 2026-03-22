@@ -9,6 +9,7 @@ description: >
   Also trigger when the user asks to log, archive, or record the current conversation,
   or wants a summary of what was discussed saved to a file.
   Do NOT trigger for memory saving (use memory system) or for git commit messages.
+user-invocable: true
 version: 0.1.0
 ---
 
@@ -34,7 +35,7 @@ Look for the most recent file in `claudelogs/`:
 ls -t claudelogs/conv-*.md 2>/dev/null | head -1
 ```
 
-If a previous save exists, read it to determine where the last save ended. Find the last numbered topic section (e.g., `## 9.`) — the new save should only include conversation that happened after that point. Continue numbering from where the previous save left off (e.g., start at `## 10.`).
+If a previous save exists, read it to determine where the last save ended — the new save should only include conversation that happened after that point. Always start numbering from `## 1.` in each save file.
 
 If no previous save exists, this is the first save of the session — include everything.
 
@@ -110,7 +111,7 @@ Guidelines for writing the summary:
 - Include file paths, command names, surface refs, and version numbers — these are the details that matter
 - Write in the same language as the conversation (Korean if Korean, English if English)
 - Skip trivial confirmations ("ok", "yes") — only log meaningful exchanges
-- For incremental saves: include a `이전 로그:` reference at the top pointing to the previous save file, and continue section numbering from where it left off
+- For incremental saves: include a `이전 로그:` reference at the top pointing to the previous save file. Always start numbering from `## 1.` (do not continue from the previous file's numbering)
 
 ### Step 5: Save and confirm
 
