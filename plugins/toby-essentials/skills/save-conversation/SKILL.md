@@ -26,7 +26,19 @@ The goal is to create a readable record of what Toby and Claude discussed and ac
 mkdir -p claudelogs
 ```
 
-### Step 2: Generate the filename
+### Step 2: Check for previous save in this session
+
+Look for the most recent file in `claudelogs/`:
+
+```bash
+ls -t claudelogs/conv-*.md 2>/dev/null | head -1
+```
+
+If a previous save exists, read it to determine where the last save ended. Find the last numbered topic section (e.g., `## 9.`) — the new save should only include conversation that happened after that point. Continue numbering from where the previous save left off (e.g., start at `## 10.`).
+
+If no previous save exists, this is the first save of the session — include everything.
+
+### Step 3: Generate the filename
 
 Use the current timestamp:
 
@@ -35,9 +47,9 @@ TIMESTAMP=$(date +%Y%m%d-%H%M%S)
 FILENAME="claudelogs/conv-${TIMESTAMP}.md"
 ```
 
-### Step 3: Write the conversation summary
+### Step 4: Write the conversation summary
 
-Review the entire conversation history and write a markdown file with this structure:
+Review the conversation history (only the part after the last save, or everything if first save) and write a markdown file with this structure:
 
 ```markdown
 # Conversation Log — {YYYY-MM-DD HH:MM}
@@ -85,7 +97,7 @@ Before writing the file, run `git diff --name-status HEAD` (or compare against t
 - D → (삭제)
 - R → (이름변경)
 
-If there are no uncommitted changes (everything was already committed and pushed), use `git diff --name-status {first_commit_of_session}..HEAD` to capture all changes made during the session.
+If there are no uncommitted changes (everything was already committed and pushed), use `git diff --name-status {first_commit_of_session}..HEAD` to capture all changes made during the session. For incremental saves, only list files changed since the previous save.
 
 Guidelines for writing the summary:
 - Number each topic section sequentially (`## 1.`, `## 2.`, ...)
@@ -98,8 +110,9 @@ Guidelines for writing the summary:
 - Include file paths, command names, surface refs, and version numbers — these are the details that matter
 - Write in the same language as the conversation (Korean if Korean, English if English)
 - Skip trivial confirmations ("ok", "yes") — only log meaningful exchanges
+- For incremental saves: include a `이전 로그:` reference at the top pointing to the previous save file, and continue section numbering from where it left off
 
-### Step 4: Save and confirm
+### Step 5: Save and confirm
 
 Write the file using the Write tool, then tell the user:
 > "대화 내용을 저장했습니다: `claudelogs/conv-{timestamp}.md`"
