@@ -4,9 +4,9 @@ Toby's personal Claude Code plugin marketplace.
 
 ## Plugins
 
-### toby-essentials `v1.7.0`
+### toby-essentials `v1.8.0`
 
-Toby's personal toolkit: code analysis, TDD, Spring Boot init, Spring Boot 4 guide, PRD generation, AI delegation, cmux terminal control, and security hooks.
+Toby's personal toolkit: code analysis, TDD, Spring Boot init, Spring Boot 4 guide, PRD generation, AI delegation, cmux terminal control, multi-agent team, and security hooks.
 
 #### Commands
 
@@ -27,6 +27,9 @@ Toby's personal toolkit: code analysis, TDD, Spring Boot init, Spring Boot 4 gui
 | `codex-delegate` | 0.3.0 | Delegate tasks to OpenAI Codex CLI — background execution, context gathering, parallel delegation support |
 | `gemini-delegate` | 0.3.0 | Delegate tasks to Google Gemini CLI — background execution, context gathering, parallel delegation support |
 | `cmux` | 0.1.0 | Control the cmux terminal app — open browser panes, split panes, send notifications, manage workspaces, sidebar status/progress |
+| `toby-team-starter` | 0.1.0 | Spawn Codex (`--full-auto`) and Gemini (`--yolo`) in cmux panes alongside Claude — duplicate detection via pane title labeling |
+| `toby-codex` | 0.1.0 | Send a task to the Codex cmux pane and collect the result as a file in `tobyteam/` — requires "toby codex" prefix |
+| `toby-gemini` | 0.1.0 | Send a task to the Gemini cmux pane and collect the result as a file in `tobyteam/` — requires "toby gemini" prefix |
 
 #### Hooks
 
