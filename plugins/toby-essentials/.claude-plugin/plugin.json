@@ -1,6 +1,6 @@
 {
   "name": "toby-essentials",
-  "version": "1.16.0",
+  "version": "1.17.0",
   "description": "Toby's personal toolkit: code analysis, TDD, Spring Boot init, Spring Boot 4 guide, PRD generation, AI delegation, cmux terminal control, multi-agent team (toby-codex, toby-gemini), and security hooks",
   "author": {
     "name": "Toby Lee"
