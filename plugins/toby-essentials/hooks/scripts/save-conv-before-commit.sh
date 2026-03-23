@@ -59,11 +59,11 @@ fi
 CURRENT_TIME=$(date +%s)
 AGE=$(( CURRENT_TIME - FILE_TIME ))
 
-if [ "$AGE" -gt 300 ]; then
+if [ "$AGE" -gt 60 ]; then
   cat >&2 <<'EOF'
 {
   "decision": "deny",
-  "reason": "git commit intercepted: conversation log is older than 5 minutes",
+  "reason": "git commit intercepted: conversation log is older than 1 minute",
   "systemMessage": "HOOK INSTRUCTION: The latest conversation log is stale. Before running git commit, you MUST do the following steps in order:\n1. Run the save-conversation skill (invoke Skill tool with skill: 'toby-essentials:save-conversation')\n2. After the conversation log file is created, run: git add claudelogs/\n3. Then retry the original git commit command.\n\nDo NOT skip these steps. Do NOT ask the user for confirmation - just do it."
 }
 EOF
