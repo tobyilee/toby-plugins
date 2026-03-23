@@ -15,7 +15,7 @@ version: 0.1.0
 
 # save-conversation
 
-Save a concise summary of the current conversation to a markdown file in the `claudelogs/` directory.
+Save a concise summary of the current conversation to a markdown file in the `conv-logs/` directory.
 
 The goal is to create a readable record of what Toby and Claude discussed and accomplished — not a verbatim transcript, but a structured summary that's useful for future reference.
 
@@ -23,16 +23,20 @@ The goal is to create a readable record of what Toby and Claude discussed and ac
 
 ### Step 1: Create the output directory
 
+Use the current date to create a hierarchical directory structure:
+
 ```bash
-mkdir -p claudelogs
+YYYYMM=$(date +%Y%m)
+DD=$(date +%d)
+mkdir -p "conv-logs/${YYYYMM}/${DD}"
 ```
 
 ### Step 2: Check for previous save in this session
 
-Look for the most recent file in `claudelogs/`:
+Look for the most recent file across all subdirectories of `conv-logs/`:
 
 ```bash
-ls -t claudelogs/conv-*.md 2>/dev/null | head -1
+find conv-logs -name 'conv-*.md' -type f -print0 2>/dev/null | xargs -0 ls -t 2>/dev/null | head -1
 ```
 
 If a previous save exists, read it to determine where the last save ended — the new save should only include conversation that happened after that point. Always start numbering from `## 1.` in each save file.
@@ -45,7 +49,9 @@ Use the current timestamp:
 
 ```bash
 TIMESTAMP=$(date +%Y%m%d-%H%M%S)
-FILENAME="claudelogs/conv-${TIMESTAMP}.md"
+YYYYMM=$(date +%Y%m)
+DD=$(date +%d)
+FILENAME="conv-logs/${YYYYMM}/${DD}/conv-${TIMESTAMP}.md"
 ```
 
 ### Step 4: Write the conversation summary
@@ -116,6 +122,6 @@ Guidelines for writing the summary:
 ### Step 5: Save and confirm
 
 Write the file using the Write tool, then tell the user:
-> "대화 내용을 저장했습니다: `claudelogs/conv-{timestamp}.md`"
+> "대화 내용을 저장했습니다: `conv-logs/{yyyymm}/{dd}/conv-{timestamp}.md`"
 
 Show a brief preview (first 10-15 lines) so the user can verify the content looks right.

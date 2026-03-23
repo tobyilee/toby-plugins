@@ -17,29 +17,29 @@ if [ -z "$PROJECT_DIR" ]; then
   PROJECT_DIR=$(pwd)
 fi
 
-LOGDIR="$PROJECT_DIR/claudelogs"
+LOGDIR="$PROJECT_DIR/conv-logs"
 
-# Check if claudelogs directory exists and has conv logs
+# Check if conv-logs directory exists and has conv logs
 if [ ! -d "$LOGDIR" ]; then
   cat >&2 <<'EOF'
 {
   "decision": "deny",
   "reason": "git commit intercepted: no conversation log found",
-  "systemMessage": "HOOK INSTRUCTION: Before running git commit, you MUST do the following steps in order:\n1. Run the save-conversation skill (invoke Skill tool with skill: 'toby-essentials:save-conversation')\n2. After the conversation log file is created, run: git add claudelogs/\n3. Then retry the original git commit command.\n\nDo NOT skip these steps. Do NOT ask the user for confirmation - just do it."
+  "systemMessage": "HOOK INSTRUCTION: Before running git commit, you MUST do the following steps in order:\n1. Run the save-conversation skill (invoke Skill tool with skill: 'toby-essentials:save-conversation')\n2. After the conversation log file is created, run: git add conv-logs/\n3. Then retry the original git commit command.\n\nDo NOT skip these steps. Do NOT ask the user for confirmation - just do it."
 }
 EOF
   exit 2
 fi
 
-# Find the most recent conv-*.md file
-LATEST_LOG=$(ls -t "$LOGDIR"/conv-*.md 2>/dev/null | head -1)
+# Find the most recent conv-*.md file (search recursively in subdirectories)
+LATEST_LOG=$(find "$LOGDIR" -name 'conv-*.md' -type f -print0 2>/dev/null | xargs -0 ls -t 2>/dev/null | head -1)
 
 if [ -z "$LATEST_LOG" ]; then
   cat >&2 <<'EOF'
 {
   "decision": "deny",
   "reason": "git commit intercepted: no conversation log found",
-  "systemMessage": "HOOK INSTRUCTION: Before running git commit, you MUST do the following steps in order:\n1. Run the save-conversation skill (invoke Skill tool with skill: 'toby-essentials:save-conversation')\n2. After the conversation log file is created, run: git add claudelogs/\n3. Then retry the original git commit command.\n\nDo NOT skip these steps. Do NOT ask the user for confirmation - just do it."
+  "systemMessage": "HOOK INSTRUCTION: Before running git commit, you MUST do the following steps in order:\n1. Run the save-conversation skill (invoke Skill tool with skill: 'toby-essentials:save-conversation')\n2. After the conversation log file is created, run: git add conv-logs/\n3. Then retry the original git commit command.\n\nDo NOT skip these steps. Do NOT ask the user for confirmation - just do it."
 }
 EOF
   exit 2
@@ -59,7 +59,7 @@ if [ "$AGE" -gt 60 ]; then
 {
   "decision": "deny",
   "reason": "git commit intercepted: conversation log is older than 1 minute",
-  "systemMessage": "HOOK INSTRUCTION: The latest conversation log is stale. Before running git commit, you MUST do the following steps in order:\n1. Run the save-conversation skill (invoke Skill tool with skill: 'toby-essentials:save-conversation')\n2. After the conversation log file is created, run: git add claudelogs/\n3. Then retry the original git commit command.\n\nDo NOT skip these steps. Do NOT ask the user for confirmation - just do it."
+  "systemMessage": "HOOK INSTRUCTION: The latest conversation log is stale. Before running git commit, you MUST do the following steps in order:\n1. Run the save-conversation skill (invoke Skill tool with skill: 'toby-essentials:save-conversation')\n2. After the conversation log file is created, run: git add conv-logs/\n3. Then retry the original git commit command.\n\nDo NOT skip these steps. Do NOT ask the user for confirmation - just do it."
 }
 EOF
   exit 2
