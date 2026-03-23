@@ -8,8 +8,7 @@ INPUT=$(cat)
 COMMAND=$(echo "$INPUT" | jq -r '.tool_input.command // ""')
 
 # Only intercept commands that contain git commit (including chained: git add ... && git commit ...)
-if ! echo "$COMMAND" | grep -qE '(^|\&\&|;|\|)\s*git\s+commit\b'; then
-  echo "No git commit command detected, allowing execution."
+if ! echo "$COMMAND" | grep -qE '(^|\&\&|;|\|)\s*git\s+commit(\s|$)'; then
   exit 0
 fi
 
