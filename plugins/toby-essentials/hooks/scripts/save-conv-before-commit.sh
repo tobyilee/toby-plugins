@@ -9,11 +9,7 @@ COMMAND=$(echo "$INPUT" | jq -r '.tool_input.command // ""')
 
 # Only intercept commands that contain git commit (including chained: git add ... && git commit ...)
 if ! echo "$COMMAND" | grep -qE '(^|\&\&|;|\|)\s*git\s+commit\b'; then
-  exit 0
-fi
-
-# Skip if this is an amend
-if echo "$COMMAND" | grep -qE '\s+--amend\b'; then
+  echo "No git commit command detected, allowing execution."
   exit 0
 fi
 
