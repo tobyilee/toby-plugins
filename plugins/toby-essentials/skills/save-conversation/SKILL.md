@@ -21,22 +21,25 @@ The goal is to create a readable record of what Toby and Claude discussed and ac
 
 ## Workflow
 
+**IMPORTANT:** Always resolve the project root via `git rev-parse --show-toplevel` and use that as the base for `conv-logs/`. Do NOT use the current working directory — it may be a subdirectory.
+
 ### Step 1: Create the output directory
 
 Use the current date to create a hierarchical directory structure:
 
 ```bash
+PROJECT_ROOT=$(git rev-parse --show-toplevel)
 YYYYMM=$(date +%Y%m)
 DD=$(date +%d)
-mkdir -p "conv-logs/${YYYYMM}/${DD}"
+mkdir -p "${PROJECT_ROOT}/conv-logs/${YYYYMM}/${DD}"
 ```
 
 ### Step 2: Check for previous save in this session
 
-Look for the most recent file across all subdirectories of `conv-logs/`:
+Look for the most recent file across all subdirectories of `conv-logs/` under the project root:
 
 ```bash
-find conv-logs -name 'conv-*.md' -type f -print0 2>/dev/null | xargs -0 ls -t 2>/dev/null | head -1
+find "${PROJECT_ROOT}/conv-logs" -name 'conv-*.md' -type f -print0 2>/dev/null | xargs -0 ls -t 2>/dev/null | head -1
 ```
 
 If a previous save exists, read it to determine where the last save ended — the new save should only include conversation that happened after that point. Always start numbering from `## 1.` in each save file.
@@ -51,7 +54,7 @@ Use the current timestamp:
 TIMESTAMP=$(date +%Y%m%d-%H%M%S)
 YYYYMM=$(date +%Y%m)
 DD=$(date +%d)
-FILENAME="conv-logs/${YYYYMM}/${DD}/conv-${TIMESTAMP}.md"
+FILENAME="${PROJECT_ROOT}/conv-logs/${YYYYMM}/${DD}/conv-${TIMESTAMP}.md"
 ```
 
 ### Step 4: Write the conversation summary

@@ -17,7 +17,10 @@ if [ -z "$PROJECT_DIR" ]; then
   PROJECT_DIR=$(pwd)
 fi
 
-LOGDIR="$PROJECT_DIR/conv-logs"
+# Resolve git repo root — conv-logs always lives at the project root
+PROJECT_ROOT=$(git -C "$PROJECT_DIR" rev-parse --show-toplevel 2>/dev/null || echo "$PROJECT_DIR")
+
+LOGDIR="$PROJECT_ROOT/conv-logs"
 
 # Check if conv-logs directory exists and has conv logs
 if [ ! -d "$LOGDIR" ]; then
@@ -66,9 +69,9 @@ EOF
 fi
 
 # Check if the latest log is staged or already committed
-RELATIVE_LOG=$(python3 -c "import os,sys; print(os.path.relpath(sys.argv[1], sys.argv[2]))" "$LATEST_LOG" "$PROJECT_DIR")
+RELATIVE_LOG=$(python3 -c "import os,sys; print(os.path.relpath(sys.argv[1], sys.argv[2]))" "$LATEST_LOG" "$PROJECT_ROOT")
 
-cd "$PROJECT_DIR"
+cd "$PROJECT_ROOT"
 if ! git diff --cached --name-only | grep -qF "$RELATIVE_LOG"; then
   if ! git ls-files --error-unmatch "$RELATIVE_LOG" >/dev/null 2>&1; then
     cat >&2 <<EOF
