@@ -122,9 +122,43 @@ Guidelines for writing the summary:
 - Skip trivial confirmations ("ok", "yes") — only log meaningful exchanges
 - For incremental saves: always start numbering from `## 1.` (do not continue from the previous file's numbering). Do not include a reference to the previous log file
 
-### Step 5: Save and confirm
+### Step 5: Save prompt rewrites
 
-Write the file using the Write tool, then run `git add` to track the new file:
+Review the conversation for any Korean prompts that were rewritten into English (lines like `Your prompt rewritten: "..."`). If any exist, append them to a monthly prompt log file:
+
+```bash
+PROMPT_FILE="${PROJECT_ROOT}/conv-logs/${YYYYMM}/prompt-${YYYYMM}.md"
+```
+
+If the file does not exist, create it with a header:
+
+```markdown
+# Prompt Rewrites — {YYYY-MM}
+
+| id | datetime | korean | english |
+|----|----------|--------|---------|
+```
+
+Append each rewrite as a new row. Use an auto-incrementing `id` (continue from the last id in the file, or start at 1). The `datetime` is the approximate time of the exchange.
+
+Example rows:
+
+```markdown
+| 1 | 2026-03-25 21:30 | .idea는 .gitignore에 포함해줘 | Add .idea to .gitignore. |
+| 2 | 2026-03-25 21:32 | save-conversation skill에서 md 문서를 만든 뒤에 git add로 tracking까지 해주도록 변경해줘 | Modify the save-conversation skill so that after creating the markdown file, it also runs `git add` to track the file. |
+```
+
+If there are no Korean-to-English rewrites in the conversation (or the scope being saved), skip this step.
+
+After writing, run `git add` on the prompt file:
+
+```bash
+git add "${PROMPT_FILE}"
+```
+
+### Step 6: Save and confirm
+
+Write the conversation log file using the Write tool, then run `git add` to track it:
 
 ```bash
 git add "${FILENAME}"
