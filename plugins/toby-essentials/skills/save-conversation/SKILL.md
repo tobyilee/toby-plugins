@@ -124,7 +124,13 @@ Guidelines for writing the summary:
 
 ### Step 5: Save and confirm
 
-Write the file using the Write tool, then tell the user:
+Write the file using the Write tool, then run `git add` to track the new file:
+
+```bash
+git add "${FILENAME}"
+```
+
+Then tell the user:
 > "대화 내용을 저장했습니다: `conv-logs/{yyyymm}/{dd}/conv-{timestamp}.md`"
 
 Show a brief preview (first 10-15 lines) so the user can verify the content looks right.

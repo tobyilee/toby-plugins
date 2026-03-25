@@ -28,7 +28,7 @@ if [ ! -d "$LOGDIR" ]; then
 {
   "decision": "deny",
   "reason": "git commit intercepted: no conversation log found",
-  "systemMessage": "HOOK INSTRUCTION: Before running git commit, you MUST do the following steps in order:\n1. Run the save-conversation skill (invoke Skill tool with skill: 'toby-essentials:save-conversation')\n2. After the conversation log file is created, run: git add conv-logs/\n3. Then retry the original git commit command.\n\nDo NOT skip these steps. Do NOT ask the user for confirmation - just do it."
+  "systemMessage": "HOOK INSTRUCTION: Before running git commit, you MUST do the following steps in order:\n1. Run the save-conversation skill (invoke Skill tool with skill: 'toby-essentials:save-conversation')\n2. Then retry the original git commit command.\n\nDo NOT skip these steps. Do NOT ask the user for confirmation - just do it."
 }
 EOF
   exit 2
@@ -42,7 +42,7 @@ if [ -z "$LATEST_LOG" ]; then
 {
   "decision": "deny",
   "reason": "git commit intercepted: no conversation log found",
-  "systemMessage": "HOOK INSTRUCTION: Before running git commit, you MUST do the following steps in order:\n1. Run the save-conversation skill (invoke Skill tool with skill: 'toby-essentials:save-conversation')\n2. After the conversation log file is created, run: git add conv-logs/\n3. Then retry the original git commit command.\n\nDo NOT skip these steps. Do NOT ask the user for confirmation - just do it."
+  "systemMessage": "HOOK INSTRUCTION: Before running git commit, you MUST do the following steps in order:\n1. Run the save-conversation skill (invoke Skill tool with skill: 'toby-essentials:save-conversation')\n2. Then retry the original git commit command.\n\nDo NOT skip these steps. Do NOT ask the user for confirmation - just do it."
 }
 EOF
   exit 2
@@ -62,7 +62,7 @@ if [ "$AGE" -gt 60 ]; then
 {
   "decision": "deny",
   "reason": "git commit intercepted: conversation log is older than 1 minute",
-  "systemMessage": "HOOK INSTRUCTION: The latest conversation log is stale. Before running git commit, you MUST do the following steps in order:\n1. Run the save-conversation skill (invoke Skill tool with skill: 'toby-essentials:save-conversation')\n2. After the conversation log file is created, run: git add conv-logs/\n3. Then retry the original git commit command.\n\nDo NOT skip these steps. Do NOT ask the user for confirmation - just do it."
+  "systemMessage": "HOOK INSTRUCTION: The latest conversation log is stale. Before running git commit, you MUST do the following steps in order:\n1. Run the save-conversation skill (invoke Skill tool with skill: 'toby-essentials:save-conversation')\n2. Then retry the original git commit command.\n\nDo NOT skip these steps. Do NOT ask the user for confirmation - just do it."
 }
 EOF
   exit 2
