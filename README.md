@@ -30,7 +30,7 @@ Toby's personal toolkit: code analysis, TDD, Spring Boot init, Spring Boot 4 gui
 | `toby-team-starter` | 0.1.0 | Spawn Codex (`--full-auto`) and Gemini (`--yolo`) in cmux panes alongside Claude — duplicate detection via pane title labeling |
 | `toby-codex` | 0.1.0 | Send a task to the Codex cmux pane and collect the result as a file in `tobyteam/` — requires "toby codex" prefix |
 | `toby-gemini` | 0.1.0 | Send a task to the Gemini cmux pane and collect the result as a file in `tobyteam/` — requires "toby gemini" prefix |
-| `save-conversation` | — | Save a summary of the current conversation to a markdown file — trigger with "save conv", "대화 저장", etc. |
+| `save-conversation` | — | Save a summary of the current conversation to a markdown file, with Korean→English prompt rewrites logged to monthly `prompt-{yyyymm}.md` — trigger with "save conv", "대화 저장", etc. |
 
 #### Hooks
 
