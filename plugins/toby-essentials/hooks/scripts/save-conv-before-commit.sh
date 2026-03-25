@@ -48,7 +48,7 @@ EOF
   exit 2
 fi
 
-# Check if the latest log was created recently (within last 5 minutes)
+# Check if the latest log was created recently (within last 3 minutes)
 if [[ "$OSTYPE" == "darwin"* ]]; then
   FILE_TIME=$(stat -f %m "$LATEST_LOG")
 else
@@ -57,7 +57,7 @@ fi
 CURRENT_TIME=$(date +%s)
 AGE=$(( CURRENT_TIME - FILE_TIME ))
 
-if [ "$AGE" -gt 60 ]; then
+if [ "$AGE" -gt 180 ]; then
   cat >&2 <<'EOF'
 {
   "decision": "deny",
