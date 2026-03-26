@@ -56,6 +56,7 @@ Generate a unique result file path and execute Gemini using the Bash tool with `
 RESULT_FILE="/tmp/gemini-result-$(date +%s)-$RANDOM.md"
 gemini -p '<TASK_PROMPT>' \
   -y \
+  --model gemini-3.1-pro-preview \
   --include-directories "<WORKING_DIRECTORY>" \
   -o text \
   > "$RESULT_FILE" 2>&1
@@ -71,6 +72,7 @@ gemini -p "$(cat <<'PROMPT'
 PROMPT
 )" \
   -y \
+  --model gemini-3.1-pro-preview \
   --include-directories "<WORKING_DIRECTORY>" \
   -o text \
   > "$RESULT_FILE" 2>&1
@@ -128,7 +130,7 @@ When the user wants to compare approaches or get a second opinion, send the same
 ```bash
 # Launch Gemini
 GEMINI_RESULT="/tmp/gemini-result-$(date +%s)-$RANDOM.md"
-gemini -p '<TASK>' -y -o text > "$GEMINI_RESULT" 2>&1
+gemini -p '<TASK>' -y --model gemini-3.1-pro-preview -o text > "$GEMINI_RESULT" 2>&1
 
 # Launch Codex (in a separate Bash call, same turn)
 CODEX_RESULT="/tmp/codex-result-$(date +%s)-$RANDOM.md"
@@ -139,14 +141,14 @@ When both complete, present a side-by-side comparison highlighting differences i
 
 ## Configuration Overrides
 
-By default, do not specify a model — Gemini CLI will use its own default. Override only when the user explicitly requests a specific model:
+By default, use `--model gemini-3.1-pro-preview`. Override only when the user explicitly requests a different model:
 
 ```bash
-# Default (no model specified — uses CLI default)
-gemini -p "task" -y -o text
+# Default
+gemini -p "task" -y --model gemini-3.1-pro-preview -o text
 
 # Override with specific model
-gemini -p "task" -y -m gemini-2.5-pro -o text
+gemini -p "task" -y --model gemini-2.5-pro -o text
 ```
 
 ## Error Handling

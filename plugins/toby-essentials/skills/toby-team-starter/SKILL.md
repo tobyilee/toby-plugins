@@ -105,7 +105,7 @@ GEMINI_SURFACE=$(echo "$GEMINI_OUT" | grep -o 'surface:[0-9]*')
 
 # Wait for shell to initialize, then start gemini
 sleep 0.5
-cmux send --surface "$GEMINI_SURFACE" "gemini --yolo\n"
+cmux send --surface "$GEMINI_SURFACE" "gemini --yolo --model gemini-3.1-pro-preview\n"
 
 # Label the pane for future detection
 cmux rename-tab --surface "$GEMINI_SURFACE" "Gemini"
