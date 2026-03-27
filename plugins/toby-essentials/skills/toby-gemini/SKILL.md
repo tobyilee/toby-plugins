@@ -78,9 +78,9 @@ rm "$PROMPT_FILE"
 Start a background process that polls for the result file. Use Bash with `run_in_background: true`:
 
 ```bash
-# Poll every 3 seconds for up to 5 minutes (100 checks)
+# Poll every 3 seconds for up to 30 minutes (600 checks)
 RESULT_FILE="<result_file_path>"
-for i in $(seq 1 100); do
+for i in $(seq 1 600); do
   if [ -f "$RESULT_FILE" ] && [ -s "$RESULT_FILE" ]; then
     echo "RESULT_READY: $RESULT_FILE"
     cat "$RESULT_FILE"
@@ -88,7 +88,7 @@ for i in $(seq 1 100); do
   fi
   sleep 3
 done
-echo "TIMEOUT: Gemini did not write result within 5 minutes"
+echo "TIMEOUT: Gemini did not write result within 30 minutes"
 exit 1
 ```
 
@@ -107,7 +107,7 @@ When the background watcher completes:
 2. Present the content to the user with a header indicating the source:
    > **Gemini Result** (`tobyteam/gemini-result-{timestamp}.md`)
 3. If the watcher timed out, inform the user and suggest checking the Gemini pane manually:
-   > "Gemini가 5분 내에 결과를 작성하지 않았습니다. Gemini pane을 직접 확인해 주세요."
+   > "Gemini가 30분 내에 결과를 작성하지 않았습니다. Gemini pane을 직접 확인해 주세요."
 
 ## Notes
 
