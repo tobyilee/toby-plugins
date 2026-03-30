@@ -58,6 +58,7 @@ codex exec '<TASK_PROMPT>' \
   --full-auto \
   --ephemeral \
   --skip-git-repo-check \
+  -m gpt-5.4 \
   -C "<WORKING_DIRECTORY>" \
   -o "$RESULT_FILE" \
   2>&1
@@ -73,6 +74,7 @@ codex exec "$(cat <<'PROMPT'
 PROMPT
 )" \
   --full-auto --ephemeral --skip-git-repo-check \
+  -m gpt-5.4 \
   -C "<WORKING_DIRECTORY>" \
   -o "$RESULT_FILE" \
   2>&1
@@ -130,7 +132,7 @@ When the user wants to compare approaches or get a second opinion, send the same
 ```bash
 # Launch Codex
 CODEX_RESULT="/tmp/codex-result-$(date +%s)-$RANDOM.md"
-codex exec '<TASK>' --full-auto --ephemeral -C "<DIR>" -o "$CODEX_RESULT" 2>&1
+codex exec '<TASK>' --full-auto --ephemeral -m gpt-5.4 -C "<DIR>" -o "$CODEX_RESULT" 2>&1
 
 # Launch Gemini (in a separate Bash call, same turn)
 GEMINI_RESULT="/tmp/gemini-result-$(date +%s)-$RANDOM.md"
@@ -144,8 +146,8 @@ When both complete, present a side-by-side comparison highlighting differences i
 Override model or behavior with `-m` or `-c` flags:
 
 ```bash
-codex exec "task" --full-auto --ephemeral -m o3
-codex exec "task" --full-auto --ephemeral -c model_reasoning_effort="high"
+codex exec "task" --full-auto --ephemeral -m gpt-5.4
+codex exec "task" --full-auto --ephemeral -m gpt-5.4 -c model_reasoning_effort="high"
 ```
 
 ## Error Handling
