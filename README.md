@@ -4,7 +4,7 @@ Toby's personal Claude Code plugin marketplace.
 
 ## Plugins
 
-### toby-essentials `v1.23.0`
+### toby-essentials `v1.24.0`
 
 Toby's personal toolkit: code analysis, TDD, Spring Boot init, Spring Boot 4 guide, PRD generation, AI delegation, cmux terminal control, multi-agent team (toby-codex, toby-gemini), and security hooks.
 
