@@ -9,7 +9,7 @@ Create `~/.claude/hooks/cmux-notify.sh`:
 ```bash
 #!/bin/bash
 # Skip if not running inside cmux
-[ -S /tmp/cmux.sock ] || exit 0
+[ -S "${CMUX_SOCKET_PATH:-$HOME/Library/Application Support/cmux/cmux.sock}" ] || exit 0
 
 EVENT=$(cat)
 EVENT_TYPE=$(echo "$EVENT" | jq -r '.hook_event_name // "unknown"')
@@ -101,3 +101,32 @@ Set a custom command in Settings > App > Notification Command. Environment varia
 | `CMUX_NOTIFICATION_BODY` | Body text |
 
 Example: `say "$CMUX_NOTIFICATION_TITLE"` for text-to-speech alerts.
+
+## cmux claude-hook Command
+
+cmux provides a built-in `claude-hook` command for Claude Code lifecycle events. This is the native integration point between cmux and Claude Code:
+
+```bash
+# Lifecycle events (reads JSON from stdin)
+cmux claude-hook session-start    # Mark session active, set "Running" status
+cmux claude-hook stop             # Mark session idle
+cmux claude-hook notification     # Show notification from Claude Code
+cmux claude-hook prompt-submit    # Clear notification, set "Running" status
+```
+
+These can be wired into Claude Code's hook system to keep workspace status indicators in sync.
+
+## cmux set-hook Command
+
+Register event hooks directly in cmux (tmux-compatible):
+
+```bash
+# List all registered hooks
+cmux set-hook --list
+
+# Register a hook for an event
+cmux set-hook after-split-window "cmux notify --title 'Split' --body 'New pane created'"
+
+# Remove a hook
+cmux set-hook --unset after-split-window
+```

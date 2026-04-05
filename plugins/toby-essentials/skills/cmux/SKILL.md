@@ -24,7 +24,7 @@ Before using any cmux command, check that cmux is available. If cmux is not dete
 
 ```bash
 # Quick detection (prefer this)
-[ -S "${CMUX_SOCKET_PATH:-/tmp/cmux.sock}" ] && echo "cmux available"
+[ -S "${CMUX_SOCKET_PATH:-$HOME/Library/Application Support/cmux/cmux.sock}" ] && echo "cmux available"
 
 # Or check the CLI
 command -v cmux &>/dev/null && cmux ping
@@ -36,7 +36,7 @@ Environment variables set inside cmux terminals:
 |----------|-------------|
 | `CMUX_WORKSPACE_ID` | Current workspace ID |
 | `CMUX_SURFACE_ID` | Current surface ID |
-| `CMUX_SOCKET_PATH` | Socket path (default: `/tmp/cmux.sock`) |
+| `CMUX_SOCKET_PATH` | Socket path (default: `~/Library/Application Support/cmux/cmux.sock`) |
 
 ## Core Concepts
 
@@ -49,6 +49,19 @@ Window → Workspace (sidebar tab) → Pane (split region) → Surface (tab with
 - **Workspace**: A sidebar entry containing split panes. Created with `⌘N` or `cmux new-workspace`.
 - **Pane**: A split region. Created with `⌘D` (right) or `⌘⇧D` (down), or `cmux new-split right|down`.
 - **Surface**: A tab within a pane. Each surface has a `CMUX_SURFACE_ID`. Surfaces hold either a terminal or a browser panel.
+
+## Window Management
+
+Windows are OS-level windows containing workspaces. Most agents work within a single window, but multi-window setups are useful for multi-monitor workflows.
+
+```bash
+cmux list-windows                       # List all windows
+cmux current-window                     # Get active window
+cmux new-window                         # Create a new OS window
+cmux focus-window --window window:2     # Bring window to front
+cmux close-window --window window:2     # Close a window
+cmux move-workspace-to-window --workspace workspace:3 --window window:2  # Move workspace between windows
+```
 
 ## Common Workflows
 
@@ -72,11 +85,32 @@ cmux new-split right
 # Split down (horizontal split)
 cmux new-split down
 
-# List all surfaces in current workspace
-cmux list-surfaces --json
+# Create a pane with a specific type
+cmux new-pane --type browser --direction right --url https://example.com
+cmux new-pane --type terminal --direction down
 
-# Focus a specific surface
-cmux focus-surface --surface surface:3
+# Add a new surface (tab) within an existing pane
+cmux new-surface --type terminal --pane pane:2
+cmux new-surface --type browser --pane pane:2 --url https://example.com
+
+# Close a surface
+cmux close-surface --surface surface:5
+
+# List panes and surfaces
+cmux list-panes                         # List panes in workspace
+cmux list-pane-surfaces                 # List surfaces in workspace
+cmux list-panels                        # List panels (surfaces) in workspace
+cmux tree                               # Show full workspace tree
+
+# Focus
+cmux focus-pane --pane pane:3
+cmux focus-panel --panel surface:3
+
+# Resize and rearrange panes
+cmux resize-pane --pane pane:2 -R --amount 10   # Grow right by 10
+cmux swap-pane --pane pane:2 --target-pane pane:3
+cmux break-pane --surface surface:4              # Break surface out to its own pane
+cmux join-pane --target-pane pane:2 --surface surface:4  # Join surface into another pane
 ```
 
 ### Send input to panes
@@ -86,11 +120,36 @@ cmux focus-surface --surface surface:3
 cmux send "npm run build\n"
 
 # Send to a specific surface
-cmux send-surface --surface surface:3 "pytest -v\n"
+cmux send --surface surface:3 "pytest -v\n"
+
+# Send to a panel by panel ref
+cmux send-panel --panel surface:3 "npm test\n"
 
 # Send a key press
 cmux send-key enter
-cmux send-key-surface --surface surface:3 escape
+cmux send-key --surface surface:3 escape
+cmux send-key-panel --panel surface:3 ctrl+c
+```
+
+### Read terminal output
+
+Read the visible screen or scrollback buffer of a surface:
+
+```bash
+# Read current viewport
+cmux read-screen
+
+# Read from a specific surface
+cmux read-screen --surface surface:3
+
+# Include scrollback buffer
+cmux read-screen --scrollback
+
+# Limit to last N lines (implies --scrollback)
+cmux read-screen --lines 50 --surface surface:3
+
+# Pipe pane output to a command (for monitoring/logging)
+cmux pipe-pane --surface surface:3 --command "tee /tmp/build.log"
 ```
 
 ### Notifications
@@ -100,6 +159,10 @@ Notify the user when something completes or needs attention:
 ```bash
 cmux notify --title "Build Complete" --body "All tests passed"
 cmux notify --title "Claude Code" --subtitle "Waiting" --body "Agent needs input"
+
+# Manage notifications
+cmux list-notifications
+cmux clear-notifications
 ```
 
 ### Sidebar metadata
@@ -116,19 +179,55 @@ cmux set-progress 0.5 --label "Building..."
 cmux clear-progress
 
 # Log entries
-cmux log "Build started"
-cmux log --level success "All 42 tests passed"
-cmux log --level error --source build "Compilation failed"
+cmux log -- "Build started"
+cmux log --level success -- "All 42 tests passed"
+cmux log --level error --source build -- "Compilation failed"
 ```
 
 ### Workspace management
 
 ```bash
 cmux new-workspace                      # Create new workspace
-cmux list-workspaces --json             # List all workspaces
+cmux new-workspace --name "Tests" --cwd /tmp --command "npm test"  # With options
+cmux list-workspaces                    # List all workspaces
 cmux select-workspace --workspace <id>  # Switch workspace
 cmux close-workspace --workspace <id>   # Close workspace
-cmux current-workspace --json           # Get active workspace
+cmux current-workspace                  # Get active workspace
+cmux rename-workspace "New Name"        # Rename current workspace
+cmux rename-workspace --workspace workspace:2 "Build"  # Rename specific workspace
+cmux find-window --content --select "pytest"  # Search and focus by content
+```
+
+### SSH connections
+
+Open SSH sessions as dedicated workspaces:
+
+```bash
+cmux ssh user@host.example.com
+cmux ssh user@host --name "Production" --port 2222
+cmux ssh user@host --identity ~/.ssh/id_ed25519 --no-focus
+cmux ssh user@host -- htop   # Run remote command
+```
+
+### Markdown viewer
+
+Open a markdown file in a formatted viewer panel with live reload:
+
+```bash
+cmux markdown README.md                         # Open in split next to current pane
+cmux markdown open docs/ARCHITECTURE.md          # Explicit open subcommand
+```
+
+### Synchronization
+
+Use `wait-for` to coordinate between panes or scripts:
+
+```bash
+# In script A: wait for a signal (blocks up to 30s by default)
+cmux wait-for build-done --timeout 60
+
+# In script B: signal when ready
+cmux wait-for --signal build-done
 ```
 
 ## Browser Automation
@@ -188,11 +287,11 @@ cmux browser $SURFACE get title
 
 ## Socket API
 
-Every CLI command has a socket equivalent via `/tmp/cmux.sock`. Useful for scripts that need direct RPC:
+Every CLI command has a socket equivalent via `~/Library/Application Support/cmux/cmux.sock`. Useful for scripts that need direct RPC:
 
 ```bash
 # Send a JSON-RPC request
-echo '{"id":"1","method":"workspace.list","params":{}}' | nc -U /tmp/cmux.sock
+echo '{"id":"1","method":"workspace.list","params":{}}' | nc -U "${CMUX_SOCKET_PATH:-$HOME/Library/Application Support/cmux/cmux.sock}"
 ```
 
 For the full socket API reference, see `references/socket-api.md`.
@@ -209,6 +308,6 @@ For hook setup details, see `references/hooks-integration.md`.
 |---------|----------|
 | `cmux: command not found` | Create symlink: `sudo ln -sf "/Applications/cmux.app/Contents/Resources/bin/cmux" /usr/local/bin/cmux` |
 | Socket not found | cmux app might not be running, or socket is disabled in Settings |
-| `surface not found` | Run `cmux list-surfaces --json` to get valid surface IDs |
+| `surface not found` | Run `cmux list-pane-surfaces` to get valid surface IDs |
 | Browser command fails | Ensure the target surface is a browser panel, not a terminal |
 | Permission denied | Socket mode may be "Off" — check Settings or set `CMUX_SOCKET_MODE=allowAll` |

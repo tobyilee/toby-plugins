@@ -1,11 +1,11 @@
 # cmux Socket API Reference
 
-All CLI commands have equivalent JSON-RPC methods via the Unix socket at `/tmp/cmux.sock`.
+All CLI commands have equivalent JSON-RPC methods via the Unix socket at `~/Library/Application Support/cmux/cmux.sock`.
 
 ## Connection
 
 ```bash
-SOCK="${CMUX_SOCKET_PATH:-/tmp/cmux.sock}"
+SOCK="${CMUX_SOCKET_PATH:-$HOME/Library/Application Support/cmux/cmux.sock}"
 ```
 
 Send one newline-terminated JSON request per call:
@@ -72,7 +72,7 @@ Response format:
 ```python
 import json, os, socket
 
-SOCKET_PATH = os.environ.get("CMUX_SOCKET_PATH", "/tmp/cmux.sock")
+SOCKET_PATH = os.environ.get("CMUX_SOCKET_PATH", os.path.expanduser("~/Library/Application Support/cmux/cmux.sock"))
 
 def rpc(method, params=None, req_id=1):
     payload = {"id": req_id, "method": method, "params": params or {}}
@@ -92,7 +92,7 @@ print(rpc("notification.create", {"title": "Done", "body": "Task complete"}, req
 
 ```bash
 #!/bin/bash
-SOCK="${CMUX_SOCKET_PATH:-/tmp/cmux.sock}"
+SOCK="${CMUX_SOCKET_PATH:-$HOME/Library/Application Support/cmux/cmux.sock}"
 
 cmux_rpc() {
     printf "%s\n" "$1" | nc -U "$SOCK"

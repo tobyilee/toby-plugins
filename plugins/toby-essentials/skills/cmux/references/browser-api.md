@@ -14,6 +14,9 @@ Full reference for `cmux browser` subcommands. All commands target a browser sur
 | Frames/Dialogs | `frame`, `dialog`, `download` |
 | State | `cookies`, `storage`, `state` |
 | Tabs/Logs | `tab`, `console`, `errors` |
+| Device emulation | `viewport`, `geolocation`/`geo`, `offline` |
+| Network | `network route`, `network unroute`, `network requests` |
+| Recording | `trace`, `screencast` |
 
 ## Targeting
 
@@ -197,4 +200,49 @@ cmux browser surface:2 frame main   # Return to top-level
 ```bash
 cmux browser surface:2 click "a#download-report"
 cmux browser surface:2 download --path /tmp/report.csv --timeout-ms 30000
+```
+
+## Viewport and Device Emulation
+
+```bash
+# Set browser dimensions (pixels)
+cmux browser surface:2 viewport 375 812          # iPhone X size
+
+# Simulate GPS coordinates
+cmux browser surface:2 geolocation 37.7749 -122.4194   # San Francisco
+cmux browser surface:2 geo 35.6762 139.6503             # Tokyo (alias)
+
+# Toggle offline mode
+cmux browser surface:2 offline true
+cmux browser surface:2 offline false
+```
+
+## Network Interception
+
+Mock or block HTTP requests:
+
+```bash
+# Route: intercept requests matching a URL pattern
+cmux browser surface:2 network route "*/api/users" --body '{"users":[]}'
+cmux browser surface:2 network route "*/analytics/*" --abort   # Block requests
+
+# Remove a route
+cmux browser surface:2 network unroute "*/api/users"
+
+# List captured requests
+cmux browser surface:2 network requests
+```
+
+## Performance Tracing and Recording
+
+```bash
+# Record a performance trace
+cmux browser surface:2 trace start /tmp/trace.json
+# ... interact with the page ...
+cmux browser surface:2 trace stop
+
+# Record video (screencast)
+cmux browser surface:2 screencast start
+# ... interact with the page ...
+cmux browser surface:2 screencast stop
 ```
