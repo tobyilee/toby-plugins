@@ -11,7 +11,7 @@ description: >
   CLI, or set sidebar status/progress for build scripts. Do NOT trigger for
   general tmux commands — cmux is a different app. If cmux is not detected
   (no socket, no CLI), inform the user and skip.
-version: 0.1.0
+version: 0.2.0
 ---
 
 # cmux — Terminal Control from Claude Code
