@@ -4,7 +4,7 @@ Toby's personal Claude Code plugin marketplace.
 
 ## Plugins
 
-### toby-essentials `v1.26.0`
+### toby-essentials `v1.27.0`
 
 Toby's personal toolkit: code analysis, TDD, Spring Boot init, Spring Boot 4 guide, PRD generation, AI delegation, cmux terminal control, multi-agent team (toby-codex, toby-gemini), and security hooks.
 
@@ -32,6 +32,7 @@ Toby's personal toolkit: code analysis, TDD, Spring Boot init, Spring Boot 4 gui
 | `toby-gemini` | 0.1.0 | Send a task to the Gemini cmux pane and collect the result as a file in `tobyteam/` — requires "toby gemini" prefix |
 | `save-conversation` | — | Save a summary of the current conversation to a markdown file, with Korean→English prompt rewrites logged to monthly `prompt-{yyyymm}.md` — trigger with "save conv", "대화 저장", etc. |
 | `omc-tips` | 0.2.0 | oh-my-claudecode (OMC) comprehensive quick-reference — mode selection, magic keywords, 19 agents (3-tier), 37 skills, hooks, MCP tools, and practical examples |
+| `use-harness` | 0.1.0 | Quick-start menu for pre-built harness use cases — 8 templates across 4 categories (Research, Content, Media, Engineering), category→use case two-step selection, launches via harness:harness |
 
 #### Hooks
 
