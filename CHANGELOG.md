@@ -3,6 +3,16 @@
 All notable changes to toby-plugins are documented here.
 Format loosely follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.29.0] - 2026-04-17
+
+### Added
+- **New skill `claude-backup`** (`v0.1.0`) — back up and restore the user-authored parts of `~/.claude/`: global `CLAUDE.md`, `settings.json` (hooks live here too), user-level commands/skills/subagents, installed plugin manifests, and cloned marketplace repos. Explicit allowlist; caches, session state, plugin-generated data, and bot tokens are excluded by policy. Backups are timestamped under `~/.claude-backup/` — a **sibling** of `~/.claude/` rather than inside it, so snapshots survive a full reinstall that deletes `~/.claude/`.
+- **Three slash-command wrappers** for the skill:
+  - `/toby-essentials:claude-backup` — create a timestamped backup
+  - `/toby-essentials:claude-backup-list` — list existing snapshots newest-first
+  - `/toby-essentials:claude-restore [--apply] [--backup PATH]` — restore; dry-run by default (shows rsync itemized diff), `--apply` to commit, additive (no `--delete` — restoring can never remove work added since the snapshot)
+- Symlinks inside `~/.claude/skills/` (e.g. `autoplan -> gstack/autoplan`) are preserved verbatim via `rsync -a` rather than dereferenced.
+
 ## [1.28.0] - 2026-04-17
 
 ### Fixed

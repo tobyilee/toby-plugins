@@ -1,7 +1,7 @@
 {
   "name": "toby-essentials",
-  "version": "1.28.0",
-  "description": "Toby's personal toolkit — 14 skills spanning code analysis, TDD, Spring Boot, AI delegation, cmux control, multi-agent teams, OMC reference, harness templates, social writing, and opt-in security hooks.",
+  "version": "1.29.0",
+  "description": "Toby's personal toolkit — 15 skills spanning code analysis, TDD, Spring Boot, AI delegation, cmux control, multi-agent teams, OMC reference, harness templates, social writing, ~/.claude config backup/restore, and opt-in security hooks.",
   "author": {
     "name": "Toby Lee"
   },

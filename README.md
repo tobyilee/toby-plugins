@@ -4,9 +4,9 @@ Toby's personal Claude Code plugin marketplace.
 
 ## Plugins
 
-### toby-essentials `v1.28.0`
+### toby-essentials `v1.29.0`
 
-Toby's personal toolkit — 14 skills spanning code analysis, TDD, Spring Boot init & Boot-4 migration guide, PRD generation, AI delegation (Codex/Gemini), cmux terminal control, multi-agent team (toby-codex, toby-gemini), OMC quick-reference, harness templates, Facebook-style writing, conversation logging, and opt-in security hooks.
+Toby's personal toolkit — 15 skills spanning code analysis, TDD, Spring Boot init & Boot-4 migration guide, PRD generation, AI delegation (Codex/Gemini), cmux terminal control, multi-agent team (toby-codex, toby-gemini), OMC quick-reference, harness templates, Facebook-style writing, conversation logging, ~/.claude config backup/restore, and opt-in security hooks.
 
 Default model versions for Codex/Gemini live in [`plugins/toby-essentials/MODELS.md`](plugins/toby-essentials/MODELS.md) — a single source of truth to reduce upgrade friction. Release notes live in [`CHANGELOG.md`](CHANGELOG.md).
 
@@ -17,6 +17,9 @@ Default model versions for Codex/Gemini live in [`plugins/toby-essentials/MODELS
 | `/code-quality` | Evaluate code quality with 4 parallel agents, score 9 dimensions (readability, maintainability, testability, performance, security, etc.), generate markdown report |
 | `/code-explore` | Deep codebase analysis with 5 parallel agents (structure, style, architecture, complexity, testing), generate comprehensive report |
 | `/merge-permissions` | Merge local project `.claude/settings.local.json` permissions into global `~/.claude/settings.json` |
+| `/claude-backup` | Create a timestamped backup of `~/.claude/` under `~/.claude-backup/claude-<YYYYMMDD-HHMMSS>/` (global config, commands, skills, plugin manifests, marketplace clones). Excludes caches, session state, and bot tokens. |
+| `/claude-backup-list` | List existing `~/.claude-backup/` snapshots, newest first, with size + timestamp |
+| `/claude-restore` | Restore from a `~/.claude-backup/` snapshot. Dry-run by default; pass `--apply` to overwrite, `--backup PATH` to target a specific snapshot |
 
 #### Skills
 
@@ -36,6 +39,7 @@ Default model versions for Codex/Gemini live in [`plugins/toby-essentials/MODELS
 | `omc-tips` | 0.2.0 | oh-my-claudecode (OMC) comprehensive quick-reference — mode selection, magic keywords, 19 agents (3-tier), 37 skills, hooks, MCP tools, and practical examples |
 | `use-harness` | 0.1.0 | Quick-start menu for pre-built harness use cases — 8 templates across 4 categories (Research, Content, Media, Engineering), category→use case two-step selection, launches via harness:harness |
 | `toby-facebook-style` | 0.1.0 | Draft social posts in Toby's Facebook voice — 반말 평서체, 한영 혼용, 4-pattern frame (기술 관찰 / URL 코멘트 / 일상 에세이 / 한마디), distilled from 3,757 posts (2010–2026) |
+| `claude-backup` | 0.1.0 | Back up and restore the user-authored parts of `~/.claude/` (CLAUDE.md, settings.json, user-level commands/skills/subagents, installed plugin manifests, marketplace clones). Timestamped snapshots under `~/.claude-backup/`; restore is dry-run by default and additive (never deletes new work). |
 
 #### Hooks
 
