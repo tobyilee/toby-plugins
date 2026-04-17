@@ -1,6 +1,7 @@
 #!/bin/bash
 INPUT=$(cat)
 COMMAND=$(echo "$INPUT" | jq -r '.tool_input.command // ""')
+HOOK_CWD=$(echo "$INPUT" | jq -r '.cwd // ""')
 
 # 간접 실행을 통한 rm -rf 우회 차단 (bash -c, sh -c, eval 등)
 if echo "$COMMAND" | grep -qiE '(bash|sh|zsh)\s+-c\s+.*rm\s+-(rf|fr|r)\b'; then
@@ -17,7 +18,10 @@ fi
 if echo "$COMMAND" | grep -qE 'rm\s+-(rf|fr|r|f)\b'; then
   # -f만 단독 사용은 디렉토리 삭제가 아니므로 제외
   if echo "$COMMAND" | grep -qE 'rm\s+-(rf|fr|r)\b' || echo "$COMMAND" | grep -qE 'rm\s+(-[a-zA-Z]+\s+)+.*-[a-zA-Z]*r'; then
-    PROJECT_DIR=$(pwd)
+    # Hook JSON의 cwd를 우선 사용 (실행 시점 pwd 보다 신뢰 가능), 없으면 pwd 폴백
+    PROJECT_DIR="${HOOK_CWD:-$(pwd)}"
+    # PROJECT_DIR 자체가 symlink를 포함할 수 있으므로 realpath로 해석 — 비교 기준 통일
+    PROJECT_DIR=$(python3 -c "import os,sys; print(os.path.realpath(sys.argv[1]))" "$PROJECT_DIR")
     BLOCKED=false
     # rm 명령어에서 옵션 이후의 경로 인자들을 추출
     TARGETS=$(echo "$COMMAND" | sed -E 's/^.*rm\s+(-[a-zA-Z]+\s+)+//' | tr ' ' '\n')
@@ -32,9 +36,9 @@ if echo "$COMMAND" | grep -qE 'rm\s+-(rf|fr|r|f)\b'; then
       else
         ABS_PATH="$PROJECT_DIR/$TARGET"
       fi
-      # 심볼릭 링크 등을 해석하지 않고 경로 정규화 (.. 등 제거)
-      ABS_PATH=$(python3 -c "import os,sys; print(os.path.normpath(sys.argv[1]))" "$ABS_PATH")
-      # 프로젝트 디렉토리 내부가 아니면 차단
+      # realpath로 symlink까지 모두 해석 — symlink가 프로젝트 밖을 가리키는 우회 차단
+      ABS_PATH=$(python3 -c "import os,sys; print(os.path.realpath(sys.argv[1]))" "$ABS_PATH")
+      # 프로젝트 디렉토리 내부가 아니면 차단 (프로젝트 루트 자체 삭제도 차단)
       if [[ "$ABS_PATH" != "$PROJECT_DIR"/* ]]; then
         BLOCKED=true
         break

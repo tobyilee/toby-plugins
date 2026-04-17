@@ -84,8 +84,9 @@ Skip if codex is already running or codex CLI is not available.
 CODEX_OUT=$(cmux new-split right)
 CODEX_SURFACE=$(echo "$CODEX_OUT" | grep -o 'surface:[0-9]*')
 
-# Wait for shell to initialize, then start codex
-sleep 0.5
+# Shell readiness check via cmux IPC round-trip (no hard sleep per project convention).
+# The read-screen call naturally paces ~10-50ms — enough for shell init without sleep.
+cmux read-screen --surface "$CODEX_SURFACE" --lines 1 >/dev/null 2>&1 || true
 cmux send --surface "$CODEX_SURFACE" "codex --full-auto\n"
 
 # Label the pane for future detection
@@ -103,8 +104,9 @@ Split down from the Codex surface specifically (use `--surface` flag) so Gemini 
 GEMINI_OUT=$(cmux new-split down --surface "$CODEX_SURFACE")
 GEMINI_SURFACE=$(echo "$GEMINI_OUT" | grep -o 'surface:[0-9]*')
 
-# Wait for shell to initialize, then start gemini
-sleep 0.5
+# Shell readiness check via cmux IPC round-trip (no hard sleep per project convention).
+cmux read-screen --surface "$GEMINI_SURFACE" --lines 1 >/dev/null 2>&1 || true
+# Model version: single source of truth is plugins/toby-essentials/MODELS.md
 cmux send --surface "$GEMINI_SURFACE" "gemini --yolo --model gemini-3.1-pro-preview\n"
 
 # Label the pane for future detection

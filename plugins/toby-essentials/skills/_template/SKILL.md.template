@@ -1,0 +1,39 @@
+---
+name: skill-name-in-kebab-case
+description: >
+  One sentence describing what the skill does and when to trigger it.
+  Trigger on "keyword one", "keyword two", "한국어 키워드".
+  Also trigger when [describe ambiguous cases].
+  Do NOT trigger for [anti-trigger cases].
+version: 0.1.0
+# user-invocable: true   # uncomment if user should be able to call via /skill-name
+# allowed-tools: Read, Glob, Grep, Bash(ls:*)   # scope tools when possible
+---
+
+# Skill Title
+
+One-paragraph overview: what problem this solves, what the output looks like.
+
+## Prerequisites
+
+List any external CLIs, env vars, files, or setup the skill requires.
+
+## Workflow
+
+### Step 1: Gather Context
+Describe the preparation step — what files to read, what state to check.
+
+### Step 2: Perform the Work
+The main action. Include exact commands or code blocks the skill should emit.
+
+### Step 3: Report
+How to present results to the user.
+
+## Notes
+
+- Edge cases, failure modes, and recovery instructions.
+- Pointer to `references/*.md` for extended content (progressive disclosure).
+
+## Reference Files (optional)
+
+- `references/detailed.md` — extended examples or data the skill consults on demand.

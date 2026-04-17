@@ -19,6 +19,10 @@ oh-my-claudecode (OMC) is a multi-agent orchestration plugin for Claude Code.
 It turns Claude Code into a platform of 19 specialized agents, 37 skills, and
 20 lifecycle hooks — all driven by natural-language magic keywords.
 
+> **Last verified against OMC v4.12.x (2026-04-17).** OMC evolves fast — if you
+> see a version mismatch in session-start messages, run `omc update` and
+> re-verify agent/skill counts before relying on this reference.
+
 ## Architecture at a Glance
 
 ```

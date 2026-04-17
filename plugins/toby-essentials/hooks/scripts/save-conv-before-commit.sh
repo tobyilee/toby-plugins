@@ -1,5 +1,6 @@
 #!/bin/bash
 # Pre-commit hook: Ensure save-conversation is run before git commit
+# Opt-in: Only active in projects that already have conv-logs/ at their root.
 # Blocks git commit if no recent conversation log exists or if it's not staged.
 
 set -euo pipefail
@@ -22,16 +23,10 @@ PROJECT_ROOT=$(git -C "$PROJECT_DIR" rev-parse --show-toplevel 2>/dev/null || ec
 
 LOGDIR="$PROJECT_ROOT/conv-logs"
 
-# Check if conv-logs directory exists and has conv logs
+# Opt-in: projects without conv-logs/ don't use this workflow — skip enforcement.
+# This prevents the hook from blocking every commit in unrelated repos.
 if [ ! -d "$LOGDIR" ]; then
-  cat >&2 <<'EOF'
-{
-  "decision": "deny",
-  "reason": "git commit intercepted: no conversation log found",
-  "systemMessage": "HOOK INSTRUCTION: Before running git commit, you MUST do the following steps in order:\n1. Run the save-conversation skill (invoke Skill tool with skill: 'toby-essentials:save-conversation')\n2. Then retry the original git commit command.\n\nDo NOT skip these steps. Do NOT ask the user for confirmation - just do it."
-}
-EOF
-  exit 2
+  exit 0
 fi
 
 # Find the most recent conv-*.md file (search recursively in subdirectories)
@@ -61,7 +56,7 @@ if [ "$AGE" -gt 180 ]; then
   cat >&2 <<'EOF'
 {
   "decision": "deny",
-  "reason": "git commit intercepted: conversation log is older than 1 minute",
+  "reason": "git commit intercepted: conversation log is older than 3 minutes",
   "systemMessage": "HOOK INSTRUCTION: The latest conversation log is stale. Before running git commit, you MUST do the following steps in order:\n1. Run the save-conversation skill (invoke Skill tool with skill: 'toby-essentials:save-conversation')\n2. Then retry the original git commit command.\n\nDo NOT skip these steps. Do NOT ask the user for confirmation - just do it."
 }
 EOF

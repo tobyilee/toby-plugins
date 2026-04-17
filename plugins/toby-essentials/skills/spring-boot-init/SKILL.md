@@ -1,6 +1,7 @@
 ---
 name: spring-boot-init
 description: "Spring Boot 프로젝트를 Spring Initializr를 이용해 생성하는 스킬. 사용자가 Spring Boot 프로젝트 생성, 스프링 부트 새 프로젝트, Spring Initializr, 새 스프링 앱 만들기, create spring boot app, 스프링 부트 시작 등을 요청할 때 반드시 이 스킬을 사용한다. 간단한 Spring Boot 시작 요청이라도 이 스킬을 사용해야 한다."
+version: 0.1.0
 ---
 
 # Spring Boot Project Generator
