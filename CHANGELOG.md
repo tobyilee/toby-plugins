@@ -3,6 +3,15 @@
 All notable changes to toby-plugins are documented here.
 Format loosely follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.30.0] - 2026-04-23
+
+### Added
+- **Two new session-management skills** forming a handoff/catchup pair, operationalizing the "Document & Clear" pattern (Tier 2 of the session-handoff strategy):
+  - `handoff` (`v0.1.0`) — writes a forward-looking session handoff to `.claude/reports/handoff/handoff-<timestamp>.md` with Summary, Key Decisions, Traps to Avoid, Working Agreements, line-numbered file refs, status-form Open Work, and a verifying "Prompt for New Chat". Enforces the ~2K-token budget and "no imperatives in Open Work" rule via a pre-save checklist step in the skill workflow.
+  - `catchup` (`v0.1.0`) — at the start of a new session, reads the newest `handoff-*.md`, Read-verifies every referenced file, cross-checks against `git status` / `git log`, classifies each claim as ✅Confirmed / ⚠️Shifted / ❌Missing / ❓Ambiguous, then **stops** for user instruction. Structurally enforces the "handoff is hypothesis, not fact" rule — the report cannot be produced without the verification pass.
+- Both skills are `user-invocable: true` (`/toby-essentials:handoff`, `/toby-essentials:catchup`).
+- README blurb updated: 15 → 17 skills, mention of `session handoff/catchup` added.
+
 ## [1.29.0] - 2026-04-17
 
 ### Added

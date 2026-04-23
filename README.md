@@ -4,9 +4,9 @@ Toby's personal Claude Code plugin marketplace.
 
 ## Plugins
 
-### toby-essentials `v1.29.0`
+### toby-essentials `v1.30.0`
 
-Toby's personal toolkit — 15 skills spanning code analysis, TDD, Spring Boot init & Boot-4 migration guide, PRD generation, AI delegation (Codex/Gemini), cmux terminal control, multi-agent team (toby-codex, toby-gemini), OMC quick-reference, harness templates, Facebook-style writing, conversation logging, ~/.claude config backup/restore, and opt-in security hooks.
+Toby's personal toolkit — 17 skills spanning code analysis, TDD, Spring Boot init & Boot-4 migration guide, PRD generation, AI delegation (Codex/Gemini), cmux terminal control, multi-agent team (toby-codex, toby-gemini), OMC quick-reference, harness templates, Facebook-style writing, conversation logging, session handoff/catchup, ~/.claude config backup/restore, and opt-in security hooks.
 
 Default model versions for Codex/Gemini live in [`plugins/toby-essentials/MODELS.md`](plugins/toby-essentials/MODELS.md) — a single source of truth to reduce upgrade friction. Release notes live in [`CHANGELOG.md`](CHANGELOG.md).
 
@@ -36,6 +36,8 @@ Default model versions for Codex/Gemini live in [`plugins/toby-essentials/MODELS
 | `toby-codex` | 0.1.0 | Send a task to the Codex cmux pane and collect the result as a file in `tobyteam/` — requires "toby codex" prefix |
 | `toby-gemini` | 0.1.0 | Send a task to the Gemini cmux pane and collect the result as a file in `tobyteam/` — requires "toby gemini" prefix |
 | `save-conversation` | — | Save a summary of the current conversation to a markdown file, with Korean→English prompt rewrites logged to monthly `prompt-{yyyymm}.md` — trigger with "save conv", "대화 저장", etc. |
+| `handoff` | 0.1.0 | Write a forward-looking handoff under `.claude/reports/handoff/handoff-<timestamp>.md` before ending a session — Summary, Key Decisions, Traps to Avoid, line-numbered file refs, **status-form** Open Work, and a verifying "Prompt for New Chat". ~2K token budget |
+| `catchup` | 0.1.0 | Resume from the latest handoff — Read-verifies every referenced file, cross-checks against `git status` / `git log`, reports ✅Confirmed / ⚠️Shifted / ❌Missing claims, then **stops** for instruction. Handoff is hypothesis, not fact |
 | `omc-tips` | 0.2.0 | oh-my-claudecode (OMC) comprehensive quick-reference — mode selection, magic keywords, 19 agents (3-tier), 37 skills, hooks, MCP tools, and practical examples |
 | `use-harness` | 0.1.0 | Quick-start menu for pre-built harness use cases — 8 templates across 4 categories (Research, Content, Media, Engineering), category→use case two-step selection, launches via harness:harness |
 | `toby-facebook-style` | 0.1.0 | Draft social posts in Toby's Facebook voice — 반말 평서체, 한영 혼용, 4-pattern frame (기술 관찰 / URL 코멘트 / 일상 에세이 / 한마디), distilled from 3,757 posts (2010–2026) |
