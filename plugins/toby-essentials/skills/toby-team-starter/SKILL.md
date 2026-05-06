@@ -87,9 +87,12 @@ CODEX_SURFACE=$(echo "$CODEX_OUT" | grep -o 'surface:[0-9]*')
 # Shell readiness check via cmux IPC round-trip (no hard sleep per project convention).
 # The read-screen call naturally paces ~10-50ms — enough for shell init without sleep.
 cmux read-screen --surface "$CODEX_SURFACE" --lines 1 >/dev/null 2>&1 || true
-cmux send --surface "$CODEX_SURFACE" "codex --full-auto\n"
+# Send the command text, then press Enter via send-key. Avoid literal "\n" in the
+# argument — cmux send treats the string as raw text, not a shell-interpreted escape.
+cmux send --surface "$CODEX_SURFACE" "codex --full-auto"
+cmux send-key --surface "$CODEX_SURFACE" enter
 
-# Label the pane for future detection
+# Label the pane for future detection (toby-codex skill matches `title == "Codex"`).
 cmux rename-tab --surface "$CODEX_SURFACE" "Codex"
 ```
 
@@ -107,9 +110,10 @@ GEMINI_SURFACE=$(echo "$GEMINI_OUT" | grep -o 'surface:[0-9]*')
 # Shell readiness check via cmux IPC round-trip (no hard sleep per project convention).
 cmux read-screen --surface "$GEMINI_SURFACE" --lines 1 >/dev/null 2>&1 || true
 # Model version: single source of truth is plugins/toby-essentials/MODELS.md
-cmux send --surface "$GEMINI_SURFACE" "gemini --yolo --model gemini-3.1-pro-preview\n"
+cmux send --surface "$GEMINI_SURFACE" "gemini --yolo --model gemini-3.1-pro-preview"
+cmux send-key --surface "$GEMINI_SURFACE" enter
 
-# Label the pane for future detection
+# Label the pane for future detection (toby-gemini skill matches `title == "Gemini"`).
 cmux rename-tab --surface "$GEMINI_SURFACE" "Gemini"
 ```
 

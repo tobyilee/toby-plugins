@@ -1,7 +1,21 @@
 ---
 name: claude-backup
 version: 0.1.0
-description: Use this skill whenever the user wants to back up or restore their global Claude Code configuration under ~/.claude — global CLAUDE.md, settings.json, user-level commands/skills/subagents, installed plugin marketplaces, and install manifests. Trigger on "claude backup", "backup claude", "backup my claude config", "snapshot claude", "restore claude", "claude 백업", "클로드 백업", "claude 복구", "claude 복원", "설정 백업", "글로벌 설정 백업", "내 claude 설정 저장", "claude 설정 복원", "plugin 백업", "설치된 플러그인 백업", "백업으로 되돌려", "이전 백업으로 복원", "원래 상태로 되돌려", "backup ~/.claude", "restore my plugins", "migrate claude to another machine". Also trigger when the user is about to do something risky to their global Claude config (big settings edit, plugin overhaul, reinstalling Claude Code) and mentions wanting a snapshot/checkpoint first, or when they mention losing plugins and wanting the previous state back. Do NOT trigger for project-level backups, git stashes, or generic "backup my repo" — this skill is specifically for the ~/.claude user directory.
+description: >
+  Use this skill whenever the user wants to back up or restore their global Claude Code
+  configuration under ~/.claude — global CLAUDE.md, settings.json, user-level
+  commands/skills/subagents, installed plugin marketplaces, and install manifests.
+  Trigger on "claude backup", "backup claude", "backup my claude config", "snapshot claude",
+  "restore claude", "claude 백업", "클로드 백업", "claude 복구", "claude 복원",
+  "설정 백업", "글로벌 설정 백업", "내 claude 설정 저장", "claude 설정 복원",
+  "plugin 백업", "설치된 플러그인 백업", "백업으로 되돌려", "이전 백업으로 복원",
+  "원래 상태로 되돌려", "backup ~/.claude", "restore my plugins",
+  "migrate claude to another machine".
+  Also trigger when the user is about to do something risky to their global Claude config
+  (big settings edit, plugin overhaul, reinstalling Claude Code) and mentions wanting a
+  snapshot/checkpoint first, or when they mention losing plugins and wanting the previous
+  state back. Do NOT trigger for project-level backups, git stashes, or generic
+  "backup my repo" — this skill is specifically for the ~/.claude user directory.
 ---
 
 # claude-backup

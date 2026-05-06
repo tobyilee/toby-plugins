@@ -16,12 +16,14 @@ version: 0.2.0
 # OMC Tips — oh-my-claudecode Quick Reference
 
 oh-my-claudecode (OMC) is a multi-agent orchestration plugin for Claude Code.
-It turns Claude Code into a platform of 19 specialized agents, 37 skills, and
-20 lifecycle hooks — all driven by natural-language magic keywords.
+It turns Claude Code into a platform of dozens of specialized agents, skills,
+and lifecycle hooks — all driven by natural-language magic keywords.
 
-> **Last verified against OMC v4.12.x (2026-04-17).** OMC evolves fast — if you
-> see a version mismatch in session-start messages, run `omc update` and
-> re-verify agent/skill counts before relying on this reference.
+> **Counts move with OMC versions.** Don't rely on hard numbers in this guide;
+> run `omc list-agents`, `omc list-skills`, and `omc list-hooks` (or `omc inventory`
+> if available) to see the live registry for your installed version.
+> Reference shape last reviewed against OMC v4.12.x — verify any specifics
+> against your version before quoting them.
 
 ## Architecture at a Glance
 
@@ -29,7 +31,7 @@ It turns Claude Code into a platform of 19 specialized agents, 37 skills, and
 autopilot   (5-stage pipeline: idea → working code)
   └── ralph   (persistence loop — keeps going until verified)
        └── ultrawork   (parallel agent execution engine)
-            └── agents   (19 specialists across 3 model tiers)
+            └── agents   (specialists across 3 model tiers — see `omc list-agents`)
 ```
 
 **Core flow:** User Input → Hooks (event detection) → Skills (behavior injection) → Agents (task execution) → State (progress tracking)

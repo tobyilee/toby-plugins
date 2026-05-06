@@ -2,9 +2,9 @@
 name: skill-name-in-kebab-case
 description: >
   One sentence describing what the skill does and when to trigger it.
-  Trigger on "keyword one", "keyword two", "한국어 키워드".
-  Also trigger when [describe ambiguous cases].
-  Do NOT trigger for [anti-trigger cases].
+  Trigger on "english keyword one", "english keyword two", "한국어 키워드", "한국어 키워드 둘".
+  Also trigger when [describe ambiguous / paraphrased cases the explicit keywords miss].
+  Do NOT trigger for [anti-trigger cases — adjacent skills, off-topic asks].
 version: 0.1.0
 # user-invocable: true   # uncomment if user should be able to call via /skill-name
 # allowed-tools: Read, Glob, Grep, Bash(ls:*)   # scope tools when possible
@@ -22,6 +22,8 @@ List any external CLIs, env vars, files, or setup the skill requires.
 
 ### Step 1: Gather Context
 Describe the preparation step — what files to read, what state to check.
+Anchor any project-relative paths to `git rev-parse --show-toplevel 2>/dev/null || pwd`,
+not bare `pwd` (subdirectory invocations break otherwise).
 
 ### Step 2: Perform the Work
 The main action. Include exact commands or code blocks the skill should emit.
@@ -37,3 +39,10 @@ How to present results to the user.
 ## Reference Files (optional)
 
 - `references/detailed.md` — extended examples or data the skill consults on demand.
+
+## Style Conventions for This Plugin
+
+- Frontmatter uses YAML folded `>` block for `description`.
+- Bilingual triggers (English + Korean) — Toby's workflow mixes both.
+- Version field is `0.x` until a skill is considered stable; bump minor for behavior changes.
+- Prefer `cmux send … && cmux send-key enter` over embedding `\n` in send arguments.

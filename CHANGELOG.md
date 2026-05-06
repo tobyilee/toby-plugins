@@ -3,6 +3,24 @@
 All notable changes to toby-plugins are documented here.
 Format loosely follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.31.0] - 2026-05-06
+
+### Fixed
+
+- **Hook (`block-dangerous.sh`):** Recursive-`rm` regex now also catches `-R`, `--recursive`, and `--no-preserve-root`. Adds a `python3 → python → realpath → shell` chain so the hook keeps working in environments without `python3` (e.g. Alpine). Refactored into a `resolve_path` helper.
+- **Hook (`save-conv-before-commit.sh`):** Switched output protocol to `decision: "block"` JSON on stdout + `exit 0` (current Claude Code hook spec) instead of stderr-JSON + exit 2. `git commit --amend` now passes through (amends edit existing commits and don't need a new conversation log). Replaced `xargs -0 ls -t` (filename-unsafe) with a `find -print0` + `stat` loop. Staleness window relaxed 3 min → 5 min.
+- **Skill (`toby-codex`, `toby-gemini`):** Result directory now anchored to `git rev-parse --show-toplevel` (with `pwd` fallback) — no more results landing in subdirectories. Removed the literal heredoc fragment from the prompt template (Codex/Gemini were copying `[your response here]` verbatim). Added a multi-line `cmux send` safety note covering the `$(cat …)` newline-collapse trap. Hardcoded 30-min watcher timeout is now `TOBY_CODEX_TIMEOUT_SEC` / `TOBY_GEMINI_TIMEOUT_SEC` (default 1800 s).
+- **Skill (`toby-team-starter`):** Replaced `cmux send "command\n"` with `cmux send "command"` + `cmux send-key … enter` for both Codex and Gemini pane launches — consistent with `toby-codex`/`toby-gemini`, no reliance on `cmux send` interpreting backslash-`n`.
+- **Skill (`save-conversation`):** `git rev-parse --show-toplevel` now falls back to `pwd` when not in a git repo (previously could write to `/conv-logs/...`). Replaced the `find … | xargs ls -t` previous-save lookup with a filename-safe `stat` loop.
+- **Skill (`tdd-team`):** "Test already passes → skip GREEN, go to REFACTOR" reframed as a STOP condition — a passing test in RED indicates either the behavior already exists (skip the cycle) or the test is wrong (rewrite). Falling through to REFACTOR is a TDD anti-pattern.
+- **Skill (`omc-tips`):** Removed hardcoded counts ("19 specialized agents, 37 skills, 20 lifecycle hooks") in favor of `omc list-agents` / `omc list-skills` / `omc list-hooks` callouts — counts drift fast across OMC versions.
+
+### Changed
+
+- **Skill (`prd`):** Frontmatter converted to YAML folded `>` block (matches the rest of the plugin). Added 8 Korean trigger phrases. Version normalized 1.0.0 → 0.2.0 to match the plugin-wide 0.x convention.
+- **Skill (`claude-backup`):** Frontmatter description converted to YAML folded `>` block for consistency.
+- **Skill template (`_template/SKILL.md.template`):** Added bilingual trigger example, project-root path convention, and a "Style Conventions for This Plugin" section so new skills inherit the house style.
+
 ## [1.30.0] - 2026-04-23
 
 ### Added

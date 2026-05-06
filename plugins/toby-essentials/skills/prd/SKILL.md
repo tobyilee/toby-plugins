@@ -1,8 +1,16 @@
 ---
 name: prd
-description: "This skill should be used when the user asks to 'create a prd', 'write prd for', 'plan this feature', 'write requirements', 'spec out a feature', 'product requirements document', 'feature spec', 'define user stories', or needs guidance on structured feature planning and requirements documentation."
+description: >
+  This skill should be used when the user asks to "create a prd", "write prd for",
+  "plan this feature", "write requirements", "spec out a feature",
+  "product requirements document", "feature spec", "define user stories",
+  "PRD 작성", "PRD 만들어", "PRD 써줘", "요구사항 문서", "기능 명세",
+  "기능 정의서", "프로덕트 요구사항", "스펙 문서 만들어", "유저 스토리 작성",
+  or needs guidance on structured feature planning and requirements documentation.
+  Do NOT trigger for ad-hoc TODO lists, design docs (use a separate design-doc workflow),
+  or sprint-planning tickets — this skill produces a single PRD per feature.
 user-invocable: true
-version: 1.0.0
+version: 0.2.0
 ---
 
 # PRD Generator

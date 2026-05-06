@@ -92,7 +92,7 @@ Execute TDD RED phase:
 
 Wait for completion. Check the result:
 - **Test fails** → proceed to GREEN
-- **Test already passes** → skip GREEN, go to REFACTOR
+- **Test already passes** → STOP. A passing test in the RED phase means either (a) the behavior is already implemented elsewhere — confirm with the user and skip the cycle for this requirement, or (b) the test isn't actually exercising the new behavior — rewrite it to be more specific before moving on. Do NOT silently fall through to REFACTOR.
 - **Build fails** → ask the agent to fix compilation, re-verify
 
 ### GREEN Phase

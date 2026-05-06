@@ -4,7 +4,7 @@ Toby's personal Claude Code plugin marketplace.
 
 ## Plugins
 
-### toby-essentials `v1.30.0`
+### toby-essentials `v1.31.0`
 
 Toby's personal toolkit — 17 skills spanning code analysis, TDD, Spring Boot init & Boot-4 migration guide, PRD generation, AI delegation (Codex/Gemini), cmux terminal control, multi-agent team (toby-codex, toby-gemini), OMC quick-reference, harness templates, Facebook-style writing, conversation logging, session handoff/catchup, ~/.claude config backup/restore, and opt-in security hooks.
 

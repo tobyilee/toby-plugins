@@ -21,14 +21,14 @@ The goal is to create a readable record of what Toby and Claude discussed and ac
 
 ## Workflow
 
-**IMPORTANT:** Always resolve the project root via `git rev-parse --show-toplevel` and use that as the base for `conv-logs/`. Do NOT use the current working directory — it may be a subdirectory.
+**IMPORTANT:** Always resolve the project root via `git rev-parse --show-toplevel` and use that as the base for `conv-logs/`. Do NOT use the current working directory — it may be a subdirectory. If the caller is not inside a git repo at all, fall back to `pwd` so writes never escape into `/conv-logs/...`.
 
 ### Step 1: Create the output directory
 
 Use the current date to create a hierarchical directory structure:
 
 ```bash
-PROJECT_ROOT=$(git rev-parse --show-toplevel)
+PROJECT_ROOT=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
 YYYYMM=$(date +%Y%m)
 DD=$(date +%d)
 mkdir -p "${PROJECT_ROOT}/conv-logs/${YYYYMM}/${DD}"
@@ -36,10 +36,16 @@ mkdir -p "${PROJECT_ROOT}/conv-logs/${YYYYMM}/${DD}"
 
 ### Step 2: Check for previous save in this session
 
-Look for the most recent file across all subdirectories of `conv-logs/` under the project root:
+Look for the most recent file across all subdirectories of `conv-logs/` under the project root. Use a `find -printf` (Linux) / `stat` (macOS) sort instead of `xargs ls -t` so filenames with spaces or newlines stay safe:
 
 ```bash
-find "${PROJECT_ROOT}/conv-logs" -name 'conv-*.md' -type f -print0 2>/dev/null | xargs -0 ls -t 2>/dev/null | head -1
+LATEST=""
+LATEST_MTIME=0
+while IFS= read -r -d '' f; do
+  if [[ "$OSTYPE" == "darwin"* ]]; then m=$(stat -f %m "$f"); else m=$(stat -c %Y "$f"); fi
+  if (( m > LATEST_MTIME )); then LATEST_MTIME=$m; LATEST="$f"; fi
+done < <(find "${PROJECT_ROOT}/conv-logs" -name 'conv-*.md' -type f -print0 2>/dev/null)
+echo "$LATEST"
 ```
 
 If a previous save exists, read it to determine where the last save ended — the new save should only include conversation that happened after that point. Always start numbering from `## 1.` in each save file.

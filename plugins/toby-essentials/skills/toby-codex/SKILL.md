@@ -34,53 +34,66 @@ Save the Codex surface ref (e.g., `surface:26`).
 
 ### Step 2: Prepare the result file path
 
+Anchor the result directory to the git project root so results land in the same place regardless of the caller's `pwd`. Fall back to `pwd` only when the caller is outside any git repo.
+
 ```bash
 TIMESTAMP=$(date +%Y%m%d-%H%M%S)
-RESULT_DIR="$(pwd)/tobyteam"
+PROJECT_ROOT=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
+RESULT_DIR="$PROJECT_ROOT/tobyteam"
 RESULT_FILE="$RESULT_DIR/codex-result-${TIMESTAMP}.md"
 mkdir -p "$RESULT_DIR"
 ```
 
 ### Step 3: Compose and send the prompt
 
-Build the prompt to send to Codex. The prompt wraps the user's task with instructions to write the result to the specific file path.
+Build the prompt with the user's task on top, then a single trailing instruction line that names the target file. Do not include literal heredoc fragments — Codex may copy them verbatim.
+
+Prompt template (substitute `${RESULT_FILE}` before sending):
 
 ```
 [USER'S TASK HERE]
 
-When you are done, write your complete response (including any code, explanation, or analysis) to this file:
-${RESULT_FILE}
-
-Write the file using the Write tool or by running: cat > "${RESULT_FILE}" << 'RESULT_EOF'
-[your response here]
-RESULT_EOF
+When you finish, write your complete final response — code, explanation, and analysis — to the file at ${RESULT_FILE}. Use the Write tool. Do not include any meta-commentary about the writing process.
 ```
 
 Send the prompt text via `cmux send`, then send an Enter key to submit. Codex's composer needs an explicit Enter press — `cmux send` inserts text but doesn't submit it.
+
+For short single-line prompts:
 
 ```bash
 cmux send --surface <codex_surface_ref> "<prompt>"
 cmux send-key --surface <codex_surface_ref> enter
 ```
 
-For prompts with special characters (quotes, backticks, `$`), escape them properly or use single quotes. For very long prompts, write to a temp file:
+For multi-line prompts, write the prompt to a temp file and pipe it via stdin so newlines are preserved (using `"$(cat …)"` collapses internal newlines to spaces under default word-splitting):
 
 ```bash
 PROMPT_FILE=$(mktemp /tmp/codex-prompt-XXXXXX.txt)
-# Write prompt content to PROMPT_FILE
-cmux send --surface <codex_surface_ref> "$(cat "$PROMPT_FILE")"
+# write the rendered prompt to "$PROMPT_FILE" (e.g. via the Write tool)
+cmux send --surface <codex_surface_ref> --stdin < "$PROMPT_FILE"
 cmux send-key --surface <codex_surface_ref> enter
-rm "$PROMPT_FILE"
+rm -f "$PROMPT_FILE"
 ```
+
+If `--stdin` is unavailable in the installed cmux build, fall back to a single quoted argument with explicit `$'...'` ANSI-C quoting so newlines survive:
+
+```bash
+PROMPT=$(cat "$PROMPT_FILE")
+cmux send --surface <codex_surface_ref> "$PROMPT"
+cmux send-key --surface <codex_surface_ref> enter
+```
+
+(The double-quoted form preserves embedded newlines in argument value — the `$(cat …)` collapse only happens with unquoted command substitution. Keep the double quotes.)
 
 ### Step 4: Launch file watcher in background
 
-Start a background process that polls for the result file. Use Bash with `run_in_background: true`:
+Start a background process that polls for the result file. Use Bash with `run_in_background: true`. Timeout is configurable via `TOBY_CODEX_TIMEOUT_SEC` (default: 1800 seconds = 30 minutes):
 
 ```bash
-# Poll every 3 seconds for up to 30 minutes (600 checks)
 RESULT_FILE="<result_file_path>"
-for i in $(seq 1 600); do
+TIMEOUT_SEC="${TOBY_CODEX_TIMEOUT_SEC:-1800}"
+DEADLINE=$(( $(date +%s) + TIMEOUT_SEC ))
+while [ "$(date +%s)" -lt "$DEADLINE" ]; do
   if [ -f "$RESULT_FILE" ] && [ -s "$RESULT_FILE" ]; then
     echo "RESULT_READY: $RESULT_FILE"
     cat "$RESULT_FILE"
@@ -88,7 +101,7 @@ for i in $(seq 1 600); do
   fi
   sleep 3
 done
-echo "TIMEOUT: Codex did not write result within 30 minutes"
+echo "TIMEOUT: Codex did not write result within ${TIMEOUT_SEC}s"
 exit 1
 ```
 
@@ -107,7 +120,7 @@ When the background watcher completes:
 2. Present the content to the user with a header indicating the source:
    > **Codex Result** (`tobyteam/codex-result-{timestamp}.md`)
 3. If the watcher timed out, inform the user and suggest checking the Codex pane manually:
-   > "Codex가 30분 내에 결과를 작성하지 않았습니다. Codex pane을 직접 확인해 주세요."
+   > "Codex가 시간 내에 결과를 작성하지 않았습니다. Codex pane을 직접 확인해 주세요. (timeout: `TOBY_CODEX_TIMEOUT_SEC`)"
 
 ## Notes
 
