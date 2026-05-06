@@ -1,0 +1,16 @@
+{
+  "name": "toby-personal",
+  "version": "1.0.0",
+  "description": "Toby's personal domain skills — Facebook-style writing voice, OMC quick-reference, harness use-case launcher, and Spring Boot init / Boot 4 migration guide. Highly opinionated; install only if these match your workflow.",
+  "author": {
+    "name": "Toby Lee"
+  },
+  "license": "MIT",
+  "keywords": [
+    "writing",
+    "spring-boot",
+    "spring-boot-4",
+    "omc",
+    "harness"
+  ]
+}

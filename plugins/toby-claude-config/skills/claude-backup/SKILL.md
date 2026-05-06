@@ -31,11 +31,11 @@ Back up the user-authored parts of `~/.claude/` to a timestamped folder and rest
 
 ## How to use
 
-Three scripts live in `scripts/`. Run them directly from bash — each is self-contained and idempotent. The `toby-essentials` plugin also ships three slash-command wrappers for explicit invocation when natural-language triggering isn't desirable:
+Three scripts live in `scripts/`. Run them directly from bash — each is self-contained and idempotent. The `toby-claude-config` plugin also ships three slash-command wrappers for explicit invocation when natural-language triggering isn't desirable:
 
-- `/toby-essentials:claude-backup` → runs `backup.sh`
-- `/toby-essentials:claude-backup-list` → runs `list-backups.sh`
-- `/toby-essentials:claude-restore [--apply] [--backup PATH]` → runs `restore.sh` with passthrough args
+- `/toby-claude-config:claude-backup` → runs `backup.sh`
+- `/toby-claude-config:claude-backup-list` → runs `list-backups.sh`
+- `/toby-claude-config:claude-restore [--apply] [--backup PATH]` → runs `restore.sh` with passthrough args
 
 ### Create a backup
 ```bash

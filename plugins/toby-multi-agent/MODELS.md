@@ -1,6 +1,6 @@
-# Model Defaults — toby-essentials
+# Model Defaults — toby-multi-agent
 
-Single source of truth for default model versions used by delegation skills.
+Single source of truth for default model versions used by delegation skills in this plugin.
 When upgrading to a newer model, update this file **and** the skills listed below.
 
 ## Current Defaults
@@ -20,7 +20,7 @@ When a new model version drops:
    - `skills/codex-delegate/SKILL.md` — 5 occurrences of `gpt-5.4`
    - `skills/gemini-delegate/SKILL.md` — 6 occurrences of `gemini-3.1-pro-preview`
    - `skills/toby-team-starter/SKILL.md` — 1 occurrence (Gemini launch command)
-3. Verify with: `grep -rn "gpt-5\\.4\\|gemini-3\\.1" plugins/toby-essentials/skills/`
+3. Verify with: `grep -rn "gpt-5\\.4\\|gemini-3\\.1" plugins/toby-multi-agent/skills/`
 4. Bump the plugin version in `.claude-plugin/plugin.json` and `README.md`
 5. Update the relevant entry in `/Users/tobylee/.claude/projects/-Users-tobylee-workspace-ai-toby-plugins/memory/` (project_codex_model.md / project_gemini_model.md)
 
@@ -31,3 +31,4 @@ When a new model version drops:
 | 2026-03-26 | Gemini default → `gemini-3.1-pro-preview` | User preference (memory entry) |
 | 2026-03-30 | Codex default → `gpt-5.4` | User preference (memory entry) |
 | 2026-04-17 | This file created as single source of truth | Reduce edit count on future upgrades |
+| 2026-05-06 | Moved from `toby-essentials` to `toby-multi-agent` | Plugin split (v2.0.0) — see CHANGELOG |

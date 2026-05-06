@@ -7,12 +7,48 @@
   },
   "plugins": [
     {
-      "name": "toby-essentials",
-      "description": "Toby's personal toolkit: code analysis, TDD, Spring scaffolding, PRD generation, AI delegation, and security hooks",
+      "name": "toby-multi-agent",
+      "description": "Multi-agent workspace — delegate to Codex/Gemini in background, or run a persistent team in cmux panes alongside Claude. Includes cmux terminal control and TDD team.",
       "author": {
         "name": "Toby Lee"
       },
-      "source": "./plugins/toby-essentials",
+      "source": "./plugins/toby-multi-agent",
+      "category": "productivity"
+    },
+    {
+      "name": "toby-session",
+      "description": "Session lifecycle — handoff before ending, verify-and-resume on the next session, log conversations. Includes opt-in pre-commit conversation-log hook.",
+      "author": {
+        "name": "Toby Lee"
+      },
+      "source": "./plugins/toby-session",
+      "category": "productivity"
+    },
+    {
+      "name": "toby-claude-config",
+      "description": "Manage your ~/.claude config — backup/restore CLAUDE.md, settings, user commands/skills/subagents, installed plugins. Includes a permissions-merge command and a recursive-rm guard hook.",
+      "author": {
+        "name": "Toby Lee"
+      },
+      "source": "./plugins/toby-claude-config",
+      "category": "productivity"
+    },
+    {
+      "name": "toby-codereview",
+      "description": "Parallel-agent code analysis — /code-quality, /code-explore, and prd skill. Built around the 'fan out → markdown report' pattern.",
+      "author": {
+        "name": "Toby Lee"
+      },
+      "source": "./plugins/toby-codereview",
+      "category": "productivity"
+    },
+    {
+      "name": "toby-personal",
+      "description": "Toby's personal domain skills — Facebook-style writing voice, OMC quick-reference, harness use-case launcher, Spring Boot init / Boot 4 migration guide. Highly opinionated.",
+      "author": {
+        "name": "Toby Lee"
+      },
+      "source": "./plugins/toby-personal",
       "category": "productivity"
     }
   ]

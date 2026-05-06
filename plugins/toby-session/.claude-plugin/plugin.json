@@ -1,0 +1,16 @@
+{
+  "name": "toby-session",
+  "version": "1.0.0",
+  "description": "Session lifecycle management — write a forward-looking handoff before ending, verify-and-resume on the next session, and log conversations for long-running work. Includes opt-in pre-commit conversation-log enforcement hook.",
+  "author": {
+    "name": "Toby Lee"
+  },
+  "license": "MIT",
+  "keywords": [
+    "handoff",
+    "catchup",
+    "session",
+    "conversation-log",
+    "continuity"
+  ]
+}

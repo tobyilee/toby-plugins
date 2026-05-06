@@ -56,7 +56,7 @@ if [ -z "$LATEST_LOG" ]; then
   emit_deny \
     "git commit intercepted: no conversation log found" \
     "HOOK INSTRUCTION: Before running git commit, you MUST do the following steps in order:
-1. Run the save-conversation skill (invoke Skill tool with skill: 'toby-essentials:save-conversation')
+1. Run the save-conversation skill (invoke Skill tool with skill: 'toby-session:save-conversation')
 2. Then retry the original git commit command.
 
 Do NOT skip these steps. Do NOT ask the user for confirmation - just do it."
@@ -71,7 +71,7 @@ if [ "$AGE" -gt 300 ]; then
   emit_deny \
     "git commit intercepted: conversation log is older than 5 minutes" \
     "HOOK INSTRUCTION: The latest conversation log is stale. Before running git commit, you MUST do the following steps in order:
-1. Run the save-conversation skill (invoke Skill tool with skill: 'toby-essentials:save-conversation')
+1. Run the save-conversation skill (invoke Skill tool with skill: 'toby-session:save-conversation')
 2. Then retry the original git commit command.
 
 Do NOT skip these steps. Do NOT ask the user for confirmation - just do it."

@@ -1,0 +1,17 @@
+{
+  "name": "toby-multi-agent",
+  "version": "1.0.0",
+  "description": "Multi-agent workspace — delegate to Codex/Gemini in background, or run a persistent team in cmux panes alongside Claude. Includes cmux terminal control, TDD team, and shared model defaults (MODELS.md).",
+  "author": {
+    "name": "Toby Lee"
+  },
+  "license": "MIT",
+  "keywords": [
+    "delegation",
+    "multi-agent",
+    "codex",
+    "gemini",
+    "cmux",
+    "tdd"
+  ]
+}

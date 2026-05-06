@@ -3,6 +3,30 @@
 All notable changes to toby-plugins are documented here.
 Format loosely follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [2.0.0] - 2026-05-06
+
+### Changed (BREAKING)
+
+- **Plugin split.** `toby-essentials` is removed and replaced with **5 focused plugins**, each addressing a distinct usage pattern. Existing users must reinstall the plugins they want individually — there is no compatibility shim.
+
+  | New plugin | Inherits | Rationale |
+  |---|---|---|
+  | `toby-multi-agent` | `codex-delegate`, `gemini-delegate`, `cmux`, `toby-team-starter`, `toby-codex`, `toby-gemini`, `tdd-team`, `MODELS.md` | All depend on cmux and/or share `MODELS.md` — they're effectively one workflow. |
+  | `toby-session` | `handoff`, `catchup`, `save-conversation`, `save-conv-before-commit.sh` hook | Session lifecycle (start/end/log). The hook is paired with `save-conversation` and the `conv-logs/` workflow — must ship together. |
+  | `toby-claude-config` | `claude-backup` skill + 3 commands, `/merge-permissions`, `block-dangerous.sh` hook | Everything that touches `~/.claude` or shell-permission boundaries. |
+  | `toby-codereview` | `/code-quality`, `/code-explore`, `prd` skill | "Fan out parallel agents → markdown report" pattern. |
+  | `toby-personal` | `toby-facebook-style`, `omc-tips`, `use-harness`, `spring-boot-init`, `spring-boot4-guide` | Personal/domain-specific. Install only if useful. |
+
+- **History preservation:** all moves used `git mv`, so per-file history (`git log --follow`) traces back to the `toby-essentials` era unchanged.
+- **`MODELS.md`** moved to `plugins/toby-multi-agent/MODELS.md`. The grep verification path in its update procedure now points to `plugins/toby-multi-agent/skills/`.
+- **Skill template** moved out of any plugin: `plugins/toby-essentials/skills/_template/` → `templates/_skill-template/`. It's now a repo-level scaffold usable across all 5 plugins.
+- **`marketplace.json`** lists 5 plugin entries instead of 1.
+- **Versioning reset:** each new plugin starts at `1.0.0`. The `toby-essentials` `1.x` line is closed.
+
+### Migration
+
+To get back the same set of skills you had on `1.31.0`, install all 5 plugins. To shed what you don't use, install selectively — most users probably want `toby-multi-agent` + `toby-session` + `toby-claude-config`.
+
 ## [1.31.0] - 2026-05-06
 
 ### Fixed

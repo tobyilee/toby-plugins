@@ -1,0 +1,16 @@
+{
+  "name": "toby-claude-config",
+  "version": "1.0.0",
+  "description": "Manage your ~/.claude config — timestamped backup/restore of CLAUDE.md, settings, user commands/skills/subagents, and installed plugins. Includes a permissions-merge command and a PreToolUse hook that blocks recursive rm outside the project directory.",
+  "author": {
+    "name": "Toby Lee"
+  },
+  "license": "MIT",
+  "keywords": [
+    "backup",
+    "restore",
+    "claude-config",
+    "permissions",
+    "security-hook"
+  ]
+}

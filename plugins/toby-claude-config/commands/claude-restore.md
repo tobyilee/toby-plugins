@@ -11,7 +11,7 @@ The restore script runs `rsync` from the backup's `dotclaude/` mirror back into 
 Run the script below with whatever arguments the user provided via `$ARGUMENTS`. Then:
 
 - **If the dry run (`--apply` was NOT passed):** read the rsync `--itemize-changes` output. If there are meaningful file changes (beyond the bare directory-mtime markers like `.d..t....`), list the top ~10 and ask the user whether they want to re-run with `--apply`. If only directory-mtime markers appear, tell them the target is already in sync with this backup.
-- **If the user passed `--apply`:** confirm the restore completed and remind them that their previous state was NOT auto-saved — they can run `/toby-essentials:claude-backup` before a restore next time to capture a safety snapshot first.
+- **If the user passed `--apply`:** confirm the restore completed and remind them that their previous state was NOT auto-saved — they can run `/toby-claude-config:claude-backup` before a restore next time to capture a safety snapshot first.
 
 ### Execute
 

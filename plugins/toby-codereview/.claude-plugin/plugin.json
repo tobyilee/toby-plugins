@@ -1,0 +1,16 @@
+{
+  "name": "toby-codereview",
+  "version": "1.0.0",
+  "description": "Parallel-agent code analysis — /code-quality scores 9 dimensions, /code-explore maps structure/style/architecture, and the prd skill turns ideas into actionable specs. Built around the 'fan out → markdown report' pattern.",
+  "author": {
+    "name": "Toby Lee"
+  },
+  "license": "MIT",
+  "keywords": [
+    "code-quality",
+    "code-analysis",
+    "prd",
+    "review",
+    "parallel-agents"
+  ]
+}

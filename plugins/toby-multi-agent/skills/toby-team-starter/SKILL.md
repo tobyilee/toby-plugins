@@ -109,7 +109,7 @@ GEMINI_SURFACE=$(echo "$GEMINI_OUT" | grep -o 'surface:[0-9]*')
 
 # Shell readiness check via cmux IPC round-trip (no hard sleep per project convention).
 cmux read-screen --surface "$GEMINI_SURFACE" --lines 1 >/dev/null 2>&1 || true
-# Model version: single source of truth is plugins/toby-essentials/MODELS.md
+# Model version: single source of truth is plugins/toby-multi-agent/MODELS.md
 cmux send --surface "$GEMINI_SURFACE" "gemini --yolo --model gemini-3.1-pro-preview"
 cmux send-key --surface "$GEMINI_SURFACE" enter
 
